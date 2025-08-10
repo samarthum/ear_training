@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Auth.js / NextAuth v5 adapter models (official) ----
+// (From @auth/prisma-adapter: keep field names/types)
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  accounts Account[]
+  sessions Session[]
+  attempts Attempt[]
+  userStat UserStat?
+
+  // App-specific
+  createdAt DateTime @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---- App models ----
+enum DrillType {
+  INTERVAL
+  CHORD
+  PROGRESSION
+}
+
+model Drill {
+  id        String   @id @default(cuid())
+  type      DrillType
+  name      String
+  // JSON schema differs by type; e.g. key range, allowed items, etc.
+  config    Json
+  authorId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attempts Attempt[]
+}
+
+model Attempt {
+  id         String   @id @default(cuid())
+  userId     String
+  drillId    String
+  // Prompt payload stored for audit/replay:
+  prompt     Json
+  // Client metrics:
+  latencyMs  Int
+  // Answer & result:
+  answer     Json
+  isCorrect  Boolean
+  createdAt  DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drill Drill @relation(fields: [drillId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([drillId])
+}
+
+model UserStat {
+  userId         String   @id
+  totalAttempts  Int      @default(0)
+  correctAttempts Int     @default(0)
+  streakDays     Int      @default(0)
+  lastAttemptAt  DateTime?
+  intervalHeat   Json?
+  chordHeat      Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model OtpCode {
+  id         String   @id @default(cuid())
+  identifier String   // email
+  codeHash   String   // hash(code + salt)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  attempts   Int      @default(0)
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([identifier])
+}
+
+

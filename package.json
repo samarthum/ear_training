@@ -7,20 +7,35 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "next": "^15.4.6",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "@auth/prisma-adapter": "^2.10.0",
+    "@prisma/client": "^6.13.0",
+    "bcryptjs": "^2.4.3",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.471.1",
+    "next-auth": "5.0.0-beta.29",
+    "tone": "^14.8.49",
+    "tonal": "^6.4.2",
+    "tailwind-merge": "^2.5.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^24.2.1",
     "@types/react": "^19.1.9",
+    "@types/bcryptjs": "^2.4.6",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.33.0",
     "eslint-config-next": "^15.4.6",
+    "prettier": "^3.3.3",
+    "prisma": "^6.13.0",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2"
   }
