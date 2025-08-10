@@ -1,0 +1,58 @@
+import type { PromptPayload } from "@/types/drills";
+
+const INTERVALS = [
+  "m2",
+  "M2",
+  "m3",
+  "M3",
+  "P4",
+  "TT",
+  "P5",
+  "m6",
+  "M6",
+  "m7",
+  "M7",
+  "P8",
+] as const;
+
+const DIRECTIONS = ["asc", "desc", "harm"] as const;
+
+export type IntervalLabel = (typeof INTERVALS)[number];
+
+const intervalToTonal: Record<IntervalLabel, string> = {
+  m2: "2m",
+  M2: "2M",
+  m3: "3m",
+  M3: "3M",
+  P4: "4P",
+  TT: "4A",
+  P5: "5P",
+  m6: "6m",
+  M6: "6M",
+  m7: "7m",
+  M7: "7M",
+  P8: "8P",
+};
+
+export function buildIntervalPrompt(key = "C"): PromptPayload {
+  const label = INTERVALS[Math.floor(Math.random() * INTERVALS.length)];
+  const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
+  return {
+    kind: "INTERVAL",
+    key,
+    mode: "major",
+    interval: intervalToTonal[label],
+    direction,
+  };
+}
+
+export function isCorrectInterval(prompt: PromptPayload, answer: IntervalLabel): boolean {
+  if (prompt.kind !== "INTERVAL") return false;
+  return intervalToTonal[answer] === prompt.interval;
+}
+
+export const INTERVAL_CHOICES: { label: IntervalLabel; value: string }[] = Object.entries(
+  intervalToTonal
+).map(([label, value]) => ({ label: label as IntervalLabel, value }));
+
+
