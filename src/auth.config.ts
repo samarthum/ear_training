@@ -2,6 +2,8 @@ import Google from "next-auth/providers/google";
 import type { NextAuthConfig } from "next-auth";
 
 export default {
+  secret: process.env.AUTH_SECRET,
+  session: { strategy: "jwt" },
   providers: [Google],
   pages: { signIn: "/sign-in" },
   callbacks: {

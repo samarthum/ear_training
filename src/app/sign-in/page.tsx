@@ -58,9 +58,11 @@ export default function SignInPage() {
         <div className="border-t pt-4">
           <h2 className="font-semibold mb-2">Magic link</h2>
           <form
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
-              signIn("email", { email });
+              try {
+                await signIn("email", { email, redirect: false });
+              } catch {}
             }}
             className="space-y-2"
           >
