@@ -79,6 +79,17 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Marketing brand tokens (scoped via utility classes, safe for app-wide use) */
+  --brand-bg: #fafaf8;
+  --brand-panel: #ffffffcc;
+  --brand-text: #0b0f14;
+  --brand-muted: #5c6773;
+  --brand-line: rgba(15, 23, 42, 0.06);
+  --brand-accent: #0ea5a5;
+  --brand-accent-ink: #063b3b;
+  --brand-ring: rgba(14, 165, 165, 0.4);
+  --brand-shadow: 0 10px 30px rgba(0,0,0,0.06);
 }
 
 .dark {
@@ -113,6 +124,17 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Marketing brand tokens (dark) */
+  --brand-bg: #0b0f14;
+  --brand-panel: #101720cc;
+  --brand-text: #eef2f7;
+  --brand-muted: #9aa5b1;
+  --brand-line: rgba(255, 255, 255, 0.08);
+  --brand-accent: #2dd4bf;
+  --brand-accent-ink: #052b26;
+  --brand-ring: rgba(45, 212, 191, 0.5);
+  --brand-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
 
 @layer base {
@@ -121,5 +143,35 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* --- Marketing utilities (scoped classes to avoid global regressions) --- */
+@layer utilities {
+  .marketing-hero-bg {
+    background:
+      radial-gradient(1200px 600px at 70% -10%, color-mix(in oklab, var(--brand-accent) 25%, transparent) 0%, transparent 60%),
+      radial-gradient(900px 600px at -10% 10%, color-mix(in oklab, var(--brand-accent) 18%, transparent) 0%, transparent 55%),
+      var(--brand-bg);
+  }
+
+  .marketing-grid-overlay::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, var(--brand-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--brand-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(closest-side, rgba(0,0,0,0.3), transparent 75%);
+            mask-image: radial-gradient(closest-side, rgba(0,0,0,0.3), transparent 75%);
+  }
+
+  .reveal { opacity: 0; transform: translateY(10px); filter: blur(2px); transition: opacity .6s ease, transform .6s ease, filter .6s ease; }
+  .reveal.show { opacity: 1; transform: translateY(0); filter: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; filter: none; transition: none; }
   }
 }

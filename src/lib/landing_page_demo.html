@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ear Training — Fast, Zen, and Musically Real</title>
+  <meta name="description" content="A minimal, game-like ear-training app for singers & instrumentalists. Always starts with tonal context. Intervals, triads, and common progressions. Fast, enjoyable sessions." />
+  <meta property="og:title" content="Ear Training — Fast, Zen, and Musically Real" />
+  <meta property="og:description" content="Always starts with tonal context. Intervals, triads, and common progressions. Zen, modern design." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0f172a" />
+  <style>
+    :root {
+      --bg: #fafaf8;
+      --panel: #ffffffcc;
+      --text: #0b0f14;
+      --muted: #5c6773;
+      --line: rgba(15, 23, 42, 0.06);
+      --accent: #0ea5a5;
+      --accent-ink: #063b3b;
+      --ring: rgba(14, 165, 165, 0.4);
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0f14;
+        --panel: #101720cc;
+        --text: #eef2f7;
+        --muted: #9aa5b1;
+        --line: rgba(255, 255, 255, 0.08);
+        --accent: #2dd4bf;
+        --accent-ink: #052b26;
+        --ring: rgba(45, 212, 191, 0.5);
+        --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      }
+    }
+
+    /* Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 70% -10%, rgba(45,212,191,0.10), transparent 60%),
+                  radial-gradient(900px 600px at -10% 10%, rgba(14,165,165,0.08), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .grid-overlay::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: 
+        linear-gradient(to right, var(--line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(closest-side, rgba(0,0,0,0.3), transparent 75%);
+    }
+
+    .container { width: min(1120px, 92vw); margin: 0 auto; }
+    .stack { display: grid; gap: 20px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+
+    header {
+      position: sticky; top: 0; z-index: 20;
+      backdrop-filter: blur(10px);
+      background: color-mix(in oklab, var(--bg) 75%, transparent);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav { padding: 14px 0; }
+
+    .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+    .brand-mark { width: 28px; height: 28px; border-radius: 999px; background: conic-gradient(from 180deg at 50% 50%, rgba(45,212,191,0.35), rgba(14,165,165,0.75)); display:grid; place-items:center; box-shadow: var(--shadow); }
+    .brand svg { width: 18px; height: 18px; opacity: 0.9; }
+    .brand-name { font-weight: 600; letter-spacing: 0.2px; }
+
+    nav a { text-decoration: none; color: var(--muted); font-size: 14px; padding: 8px 10px; border-radius: 10px; }
+    nav a:hover { color: var(--text); background: rgba(14,165,165,0.07); }
+
+    .btn { appearance: none; border: 1px solid var(--line); background: #fff0; color: var(--text); padding: 10px 16px; border-radius: 999px; font-weight: 600; cursor: pointer; transition: transform .05s ease, background .2s, box-shadow .2s; box-shadow: inset 0 0 0 1px var(--line), var(--shadow); }
+    .btn:focus-visible { outline: none; box-shadow: 0 0 0 6px var(--ring); }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 15%, transparent), color-mix(in oklab, var(--accent) 5%, transparent)); border-color: color-mix(in oklab, var(--accent) 45%, var(--line)); }
+
+    .chip { font-size: 12px; color: var(--muted); border: 1px solid var(--line); padding: 6px 10px; border-radius: 999px; }
+
+    .hero { padding: 96px 0 56px; text-align: center; }
+    .eyebrow { display:inline-flex; align-items:center; gap:10px; margin-bottom: 18px; }
+    .eyebrow .dot { width:6px; height:6px; border-radius:999px; background: var(--accent); }
+
+    h1 { font-size: clamp(34px, 6vw, 64px); line-height: 1.05; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .lead { font-size: clamp(16px, 2.2vw, 20px); color: var(--muted); margin: 0 auto 26px; max-width: 800px; }
+
+    .hero-cta { display:flex; align-items:center; justify-content:center; gap: 12px; flex-wrap: wrap; }
+    .note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+    section { padding: 72px 0; }
+    .card-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .card { grid-column: span 4; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 20px; backdrop-filter: blur(6px); box-shadow: var(--shadow); }
+    .card h3 { margin: 8px 0 8px; font-size: 18px; }
+    .card p { margin: 0; font-size: 14px; color: var(--muted); }
+
+    /* Icon system */
+    .icon { width: 28px; height: 28px; display: inline-grid; place-items: center; margin-bottom: 6px; }
+    .icon-svg { width: 28px; height: 28px; stroke: var(--text); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95; }
+
+    .how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .step { background: var(--panel); border:1px solid var(--line); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); }
+    .step .n { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
+
+    .demo { background: linear-gradient(180deg, rgba(14,165,165,0.06), transparent 55%); border-radius: 24px; border:1px solid var(--line); padding: 24px; }
+    .demo p { color: var(--muted); margin: 6px 0 16px; }
+
+    .screen { height: 340px; border-radius: 22px; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0)) , radial-gradient(1200px 500px at 50% -40%, rgba(14,165,165,0.12), transparent 60%), linear-gradient(180deg, color-mix(in oklab, var(--bg) 60%, transparent), transparent);
+      backdrop-filter: blur(6px); display:grid; place-items:center; color: var(--muted); }
+
+    .pricing { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; align-items: start; }
+    .tier { grid-column: span 6; background: var(--panel); border:1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: var(--shadow); }
+    .price { font-size: 36px; font-weight: 700; letter-spacing: -0.02em; }
+    .list { margin: 14px 0 0; padding: 0; list-style: none; color: var(--muted); }
+    .list li { padding: 8px 0; border-bottom: 1px dashed var(--line); }
+
+    details { border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; background: var(--panel); }
+    details + details { margin-top: 10px; }
+    summary { cursor: pointer; font-weight: 600; }
+
+    footer { padding: 50px 0; color: var(--muted); border-top: 1px solid var(--line); }
+
+    /* Diagnostics (dev) */
+    #diagnostics[hidden] { display: none; }
+    #diagnostics { border-top: 1px dashed var(--line); margin-top: 24px; padding-top: 12px; color: var(--muted); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .card { grid-column: span 6; }
+      .tier { grid-column: span 12; }
+      .how { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .card { grid-column: span 12; }
+      .row { flex-wrap: wrap; }
+      nav { display:none; }
+      .hero { padding-top: 72px; }
+    }
+
+    /* Reveal on scroll (subtle) */
+    .reveal { opacity: 0; transform: translateY(10px); filter: blur(2px); transition: opacity .6s ease, transform .6s ease, filter .6s ease; }
+    .reveal.show { opacity: 1; transform: translateY(0); filter: none; }
+  </style>
+</head>
+<body class="grid-overlay">
+  <header>
+    <div class="container nav row">
+      <a class="brand" href="#top" aria-label="Ear Training home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12c6-8 12 8 18 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-name">Ear Training</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <button class="btn primary" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Get early access</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero container">
+      <div class="eyebrow"><span class="dot" aria-hidden="true"></span><span class="chip">Ultra‑minimal, musically real</span></div>
+      <h1>Train your ears. <br/>In minutes, not months.</h1>
+      <p class="lead">A calm, game‑like ear‑training app for singers & instrumentalists. Every session begins with <strong>tonal context</strong> (drone + I chord), then lightly adapts as you practice <strong>intervals</strong>, <strong>triads</strong>, and <strong>common progressions</strong>.</p>
+      <div class="hero-cta">
+        <button class="btn primary" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Join the waitlist</button>
+        <button id="demoBtn" class="btn" aria-pressed="false">Play demo (C major)</button>
+      </div>
+      <div class="note">No spam. Early users get free access during beta.</div>
+    </section>
+
+    <section id="features" class="container reveal">
+      <div class="card-grid">
+        <article class="card">
+          <div class="icon" aria-hidden="true">
+            <!-- Headphones icon -->
+            <svg class="icon-svg" viewBox="0 0 24 24" role="img" aria-label="Tonal context">
+              <path d="M4 12a8 8 0 0 1 16 0"/>
+              <rect x="4" y="12" width="4" height="6" rx="2"/>
+              <rect x="16" y="12" width="4" height="6" rx="2"/>
+            </svg>
+          </div>
+          <h3>Tonal context first</h3>
+          <p>Each quiz starts with a gentle drone and I chord so your ear locks into key before you answer.</p>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">
+            <!-- Shuffle icon -->
+            <svg class="icon-svg" viewBox="0 0 24 24" role="img" aria-label="Interleaving">
+              <path d="M3 6h3l4.5 6L15 6h6"/>
+              <path d="M19 4l2 2-2 2"/>
+              <path d="M3 18h3l4.5-6L15 18h6"/>
+              <path d="M19 16l2 2-2 2"/>
+            </svg>
+          </div>
+          <h3>Interleaved & adaptive</h3>
+          <p>Small, varied prompts that nudge difficulty based on your streaks and slips. Stay in flow; avoid fatigue.</p>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">
+            <!-- Triad/progression icon (staff + stacked triad) -->
+            <svg class="icon-svg" viewBox="0 0 24 24" role="img" aria-label="Progressions">
+              <path d="M3 7h18M3 10h18M3 13h18"/>
+              <circle cx="9" cy="13" r="1.7"/>
+              <circle cx="12" cy="10" r="1.7"/>
+              <circle cx="15" cy="7" r="1.7"/>
+            </svg>
+          </div>
+          <h3>Real progressions</h3>
+          <p>Beyond trivia: drill triads and common I–IV–V, ii–V–I, and vi–IV–I–V shapes heard in actual songs.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="container reveal">
+      <div class="demo">
+        <h2 style="margin:0 0 6px; font-size:22px; letter-spacing:-0.01em;">Feel the calm start</h2>
+        <p>Tap play to hear a short example: a soft <em>drone</em> on C, then the I chord (C–E–G). This is how every session begins.</p>
+        <div class="row" style="justify-content:flex-start; gap:10px;">
+          <button id="playDemo" class="btn primary">Play demo</button>
+          <button id="stopDemo" class="btn">Stop</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="container reveal">
+      <h2 style="margin:0 0 18px; font-size:24px; letter-spacing:-0.01em;">How it works</h2>
+      <div class="how">
+        <div class="step">
+          <div class="n">01</div>
+          <h3 style="margin:6px 0 6px; font-size:18px;">Begin in key</h3>
+          <p>Hear a calm drone + I chord to center your ear.</p>
+        </div>
+        <div class="step">
+          <div class="n">02</div>
+          <h3 style="margin:6px 0 6px; font-size:18px;">Quick prompts</h3>
+          <p>Identify intervals, triads, or a short progression. No clutter; just listen, respond, learn.</p>
+        </div>
+        <div class="step">
+          <div class="n">03</div>
+          <h3 style="margin:6px 0 6px; font-size:18px;">Light adaptivity</h3>
+          <p>We interleave topics and float difficulty to keep you challenged—not overwhelmed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="container reveal">
+      <div class="screen">
+        <div style="text-align:center;">
+          <div class="chip" aria-hidden="true">Preview</div>
+          <p style="margin-top:10px">Clean, distraction‑free interface. Session cards, gentle feedback, simple stats.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="container reveal">
+      <h2 style="margin:0 0 18px; font-size:24px; letter-spacing:-0.01em;">Pricing</h2>
+      <div class="pricing">
+        <div class="tier">
+          <h3 style="margin:0 0 6px;">Early Access</h3>
+          <div class="price">Free</div>
+          <ul class="list">
+            <li>Intervals · Triads · Core progressions</li>
+            <li>Tonal context start</li>
+            <li>Light adaptivity</li>
+          </ul>
+          <div style="margin-top:16px;">
+            <button class="btn primary" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Join the waitlist</button>
+          </div>
+        </div>
+        <div class="tier">
+          <h3 style="margin:0 0 6px;">Pro (Coming later)</h3>
+          <div class="price">TBD</div>
+          <ul class="list">
+            <li>Spaced review & custom keys</li>
+            <li>Progression packs & stats</li>
+            <li>Practice reminders</li>
+          </ul>
+          <div class="note">Early users get a founder discount.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="signup" class="container reveal">
+      <div class="demo" role="region" aria-label="Join the waitlist">
+        <h2 style="margin:0 0 6px; font-size:22px; letter-spacing:-0.01em;">Get early access</h2>
+        <p>Drop your email. We’ll invite a small batch first. You can unsubscribe any time.</p>
+        <form id="wl" class="row" onsubmit="handleSignup(event)" aria-label="Waitlist form">
+          <input type="email" required name="email" placeholder="you@music.com" aria-label="Email" style="flex:1; min-width: 180px; padding:12px 14px; border-radius: 14px; border:1px solid var(--line); background: var(--panel); color: var(--text);"/>
+          <button class="btn primary" type="submit">Join</button>
+        </form>
+        <div id="wlMsg" class="note" role="status" aria-live="polite" style="min-height:1.2em; margin-top:8px;"></div>
+      </div>
+
+      <!-- Diagnostics (dev): shown when ?debug=1 or #debug -->
+      <section id="diagnostics" hidden aria-label="Diagnostics">
+        <h3 style="margin: 18px 0 8px; font-size: 16px;">Diagnostics</h3>
+        <ul id="test-results" style="margin:0; padding-left:18px"></ul>
+      </section>
+    </section>
+
+    <section id="faq" class="container reveal" aria-label="Frequently asked questions">
+      <h2 style="margin:0 0 18px; font-size:24px; letter-spacing:-0.01em;">FAQ</h2>
+      <details>
+        <summary>Why start with a drone and I chord?</summary>
+        <p style="margin-top:8px; color:var(--muted)">Because context matters. Your brain hears intervals relative to a key. We center you first to build real, musical intuition.</p>
+      </details>
+      <details>
+        <summary>Is this for beginners?</summary>
+        <p style="margin-top:8px; color:var(--muted)">Yes. It’s gentle but not trivial. Intermediate learners can select tougher sets and faster pacing later.</p>
+      </details>
+      <details>
+        <summary>Will there be spaced repetition?</summary>
+        <p style="margin-top:8px; color:var(--muted)">Yes—coming in Pro. The MVP focuses on excellent sessions with interleaving and light adaptivity.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container row" style="justify-content:space-between;">
+      <div class="row" style="gap:10px">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Ear Training</span>
+      </div>
+      <div class="note">Built with Web Audio. Tone.js planned for the app.</div>
+    </div>
+  </footer>
+
+  <script>
+    // --- Boot after DOM is ready to avoid null elements ---
+    window.addEventListener('DOMContentLoaded', () => {
+      // Reveal on scroll
+      const obs = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) e.target.classList.add('show');
+        }
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+      // Email waitlist (local demo only)
+      window.handleSignup = function handleSignup(ev) {
+        ev.preventDefault();
+        const email = ev.target.email.value.trim();
+        const msg = document.getElementById('wlMsg');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          msg.textContent = 'Please enter a valid email.';
+          return;
+        }
+        try {
+          const list = JSON.parse(localStorage.getItem('waitlist') || '[]');
+          if (!list.includes(email)) list.push(email);
+          localStorage.setItem('waitlist', JSON.stringify(list));
+          msg.textContent = 'You\'re on the list. Thank you!';
+          if (typeof ev.target.reset === 'function') ev.target.reset();
+        } catch (_) {
+          msg.textContent = 'Saved locally. Thank you!';
+        }
+      }
+
+      // Simple Web Audio demo: C drone + I chord (C–E–G)
+      let audioCtx = null;
+      let activeNodes = [];
+
+      function now() { return audioCtx ? audioCtx.currentTime : 0; }
+
+      function playTone(freq, startAt, duration, gain = 0.08) {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        const t0 = now() + startAt;
+        const t1 = t0 + duration;
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.linearRampToValueAtTime(gain, t0 + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.0001, t1);
+        osc.start(t0);
+        osc.stop(t1 + 0.01);
+        activeNodes.push(osc, g);
+      }
+
+      function playDemo() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const start = 0.05;
+        // Drone C3 for ~2.2s
+        playTone(130.81, start, 2.2, 0.06);
+        // I chord after 0.6s: C4, E4, G4
+        playTone(261.63, 0.60, 1.2, 0.07);
+        playTone(329.63, 0.60, 1.2, 0.06);
+        playTone(392.00, 0.60, 1.2, 0.06);
+      }
+
+      function stopDemo() {
+        activeNodes.forEach(n => { try { n.disconnect(); } catch(_){} try { n.stop && n.stop(); } catch(_){} });
+        activeNodes = [];
+      }
+
+      // Bind controls safely
+      const playBtn = document.getElementById('playDemo');
+      const stopBtn = document.getElementById('stopDemo');
+      const demoBtn = document.getElementById('demoBtn');
+
+      if (playBtn) {
+        playBtn.addEventListener('click', async () => {
+          try { await audioCtx?.resume?.(); } catch(_){/* autoplay may block; ignore */}
+          playDemo();
+        });
+      } else {
+        console.warn('[ear-training] #playDemo not found');
+      }
+
+      if (stopBtn) {
+        stopBtn.addEventListener('click', stopDemo);
+      } else {
+        console.warn('[ear-training] #stopDemo not found');
+      }
+
+      if (demoBtn) {
+        demoBtn.addEventListener('click', async (e) => {
+          if (e && e.currentTarget && typeof e.currentTarget.setAttribute === 'function') {
+            e.currentTarget.setAttribute('aria-pressed', 'true');
+          }
+          try { await audioCtx?.resume?.(); } catch(_){/* ignore resume errors */}
+          playDemo();
+          setTimeout(() => {
+            if (e && e.currentTarget && typeof e.currentTarget.setAttribute === 'function') {
+              e.currentTarget.setAttribute('aria-pressed', 'false');
+            }
+          }, 2200);
+        });
+      } else {
+        console.warn('[ear-training] #demoBtn not found');
+      }
+
+      // --- Minimal smoke tests (dev) ---
+      function inDebug() {
+        return /[?#&](debug=1|debug)(?:[&#]|$)/.test(location.search + location.hash);
+      }
+
+      function report(name, ok, note = '') {
+        const li = document.createElement('li');
+        li.textContent = `${ok ? '✅' : '❌'} ${name}${note ? ' — ' + note : ''}`;
+        testsUl.appendChild(li);
+      }
+
+      const diag = document.getElementById('diagnostics');
+      const testsUl = document.getElementById('test-results');
+      if (inDebug() && diag && testsUl) {
+        diag.hidden = false;
+        try {
+          report('buttons exist (#demoBtn, #playDemo, #stopDemo)', !!(demoBtn && playBtn && stopBtn));
+
+          if (demoBtn) {
+            let threw = false;
+            try { demoBtn.click(); } catch (err) { threw = true; }
+            report('demoBtn.click() does not throw', !threw);
+            setTimeout(() => {
+              report('demoBtn aria-pressed resets to false', demoBtn.getAttribute('aria-pressed') === 'false');
+            }, 2300);
+          }
+
+          let stopThrew = false;
+          try { stopDemo(); } catch (err) { stopThrew = true; }
+          report('stopDemo() safe when idle', !stopThrew);
+
+          const fakeEvent = (val) => ({
+            preventDefault(){},
+            target: { email: { value: val }, reset(){} }
+          });
+          const msgNode = document.getElementById('wlMsg');
+          handleSignup(fakeEvent('not-an-email'));
+          report('email validation blocks bad input', /valid email/.test(msgNode.textContent));
+          handleSignup(fakeEvent('user@example.com'));
+          report('email validation accepts good input', /Thank you/i.test(msgNode.textContent));
+        } catch (err) {
+          report('diagnostics crashed', false, String(err));
+        }
+      }
+    });
+  </script>
+</body>
+</html>
