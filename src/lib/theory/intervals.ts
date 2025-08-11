@@ -34,12 +34,16 @@ const intervalToTonal: Record<IntervalLabel, string> = {
   P8: "8P",
 };
 
-export function buildIntervalPrompt(key = "C"): IntervalPrompt {
+const KEYS = ["C", "D", "E", "F", "G", "A", "B"] as const;
+
+export function buildIntervalPrompt(key?: string): IntervalPrompt {
+  const selectedKey = key || KEYS[Math.floor(Math.random() * KEYS.length)];
   const label = INTERVALS[Math.floor(Math.random() * INTERVALS.length)];
   const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
+  
   return {
     kind: "INTERVAL",
-    key,
+    key: selectedKey,
     mode: "major",
     interval: intervalToTonal[label],
     direction,
