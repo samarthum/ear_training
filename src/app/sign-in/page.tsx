@@ -1,10 +1,12 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
-  const { status } = useSession();
+  const sessionHook = useSession();
+  const status = sessionHook?.status ?? "unauthenticated";
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
