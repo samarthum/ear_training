@@ -6,6 +6,7 @@ import type { IntervalPrompt } from "@/types/drills";
 
 export default function IntervalsPracticePage() {
   const [audioReady, setAudioReady] = useState(false);
+  const [audioLoading, setAudioLoading] = useState(false);
   const [pending, setPending] = useState<IntervalPrompt | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -19,12 +20,15 @@ export default function IntervalsPracticePage() {
   const startPractice = async () => {
     if (!audioReady) {
       try {
+        setAudioLoading(true);
         await ensureAudioReady();
         setAudioReady(true);
       } catch (error) {
         console.error("Failed to start audio:", error);
+        setAudioLoading(false);
         return;
       }
+      setAudioLoading(false);
     }
     nextPrompt();
   };
@@ -86,10 +90,16 @@ export default function IntervalsPracticePage() {
       <div className="flex gap-2 mb-4">
         <button
           onClick={pending ? replayAudio : startPractice}
-          disabled={isPlaying}
+          disabled={isPlaying || audioLoading}
           className="rounded-md bg-black text-white px-4 py-2 disabled:opacity-50"
         >
-          {isPlaying ? "Playing..." : pending ? "🔄 Replay" : "🎵 Start"}
+          {audioLoading
+            ? "Loading piano..."
+            : isPlaying
+            ? "Playing..."
+            : pending
+            ? "🔄 Replay"
+            : "🎵 Start"}
         </button>
         {feedback && (
           <div className="flex items-center">
