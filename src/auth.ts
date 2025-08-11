@@ -4,8 +4,9 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db/prisma";
 import { compare } from "bcryptjs";
+import type { Provider } from "next-auth/providers";
 
-const providers: any[] = [];
+const providers: Provider[] = [];
 
 const hasGoogle =
   Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) ||
@@ -47,7 +48,7 @@ providers.push(
       if (!user) {
         user = await prisma.user.create({ data: { email: credentials.email as string } });
       }
-      return { id: user.id, email: user.email ?? undefined } as any;
+      return { id: user.id, email: user.email ?? undefined };
     },
   })
 );
@@ -56,7 +57,7 @@ const useAdapter = Boolean(process.env.DATABASE_URL);
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET ?? "dev-secret",
-  adapter: useAdapter ? (PrismaAdapter(prisma) as any) : undefined,
+  adapter: useAdapter ? PrismaAdapter(prisma) : undefined,
   session: { strategy: "jwt" }, // Always use JWT strategy for compatibility with Credentials provider
   providers,
   callbacks: {

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { ensureAudioReady, playContext, playInterval, cleanupAudio } from "@/lib/audio/transport";
-import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval } from "@/lib/theory/intervals";
+import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval, type IntervalLabel } from "@/lib/theory/intervals";
 import type { IntervalPrompt } from "@/types/drills";
 
 export default function IntervalsPracticePage() {
@@ -28,7 +28,7 @@ export default function IntervalsPracticePage() {
 
   const onAnswer = async (label: string) => {
     if (!pending) return;
-    const correct = isCorrectInterval(pending, label as any);
+    const correct = isCorrectInterval(pending, label as IntervalLabel);
     setFeedback(correct ? "Correct" : "Try again");
     setTimeout(() => setFeedback(null), 800);
     nextPrompt();

@@ -28,10 +28,10 @@ Execution rules
   - [x] `tailwind.config` content points to `app/**/*.{ts,tsx}`, `components/**/*.{ts,tsx}`, `lib/**/*.{ts,tsx}`
   - [x] Create `styles/globals.css` with Tailwind base/components/utilities imports
   - [x] Wire `globals.css` in root layout
-- [ ] shadcn/ui setup
+- [x] shadcn/ui setup ✅ **COMPLETED**
   - [x] Added minimal shadcn-style `Button` and `cn` util; installed `@radix-ui/react-slot`, `tailwindcss-animate`
-  - [ ] Generate additional components: `Card`, `ToggleGroup`, `Select`, `Progress`, `Dialog`, `Toast`
-  - [ ] Note: CLI `npx shadcn init` failed against Tailwind v4 validation. Use manual copy pattern for now; revisit CLI or a v4-compatible fork later.
+  - [x] Generate additional components: `Card`, `ToggleGroup`, `Select`, `Progress`, `Dialog`, `Toast` ✅ **COMPLETED via CLI**
+  - [x] Note: CLI `npx shadcn@latest add` now working with Tailwind v4! All components installed successfully.
 - [x] Linting/formatting
   - [x] Configure ESLint + Prettier; add scripts: `lint`, `typecheck`, `format`
 - [x] Basic repository hygiene
@@ -107,7 +107,7 @@ Execution rules
 ---
 
 ### 5) Base Pages & Layout
-- [x] `/(marketing)/page.tsx` with CTA → `/sign-in`
+- [ ] `/(marketing)/page.tsx` with CTA → `/sign-in`
 - [x] `/dashboard/page.tsx` shell
   - [ ] Shows placeholders for accuracy, streak, last 7 days, links to drills
 - [x] Root layout includes Tailwind CSS
@@ -268,7 +268,7 @@ Execution rules
 - [x] Lint/type: `npm run lint` | `npm run typecheck` ✅
 - [x] Auth secret: `npx auth secret` ✅ (already generated)
 
-**Current Status**: Auth system fully working with Google + OTP; OTP email via Resend (or console fallback).
+**Current Status**: Auth system fully working with Google + OTP; OTP email via Resend (or console fallback). shadcn/ui components setup completed via CLI.
 
 ---
 
@@ -279,7 +279,10 @@ Execution rules
 - [ ] First sound consistently <3s after gesture; no overlapping audio between prompts
 - [ ] Deployed to production; basic monitoring in place
 
-**✅ MAJOR MILESTONE**: Authentication system is fully operational!
+**✅ MAJOR MILESTONES**: 
+- Authentication system is fully operational!
+- shadcn/ui components setup completed via CLI (all components properly installed)
+
 **Next Priority**: Audio engine and interval drill implementation
 
 

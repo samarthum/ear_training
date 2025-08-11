@@ -8,11 +8,11 @@ export default {
   pages: { signIn: "/sign-in" },
   callbacks: {
     jwt({ token, user }) {
-      if (user) (token as any).id = (user as any).id;
+      if (user) token.id = user.id;
       return token;
     },
     session({ session, token }) {
-      if (token && (token as any).id) (session.user as any).id = (token as any).id;
+      if (token && token.id) session.user.id = token.id as string;
       return session;
     },
   },
