@@ -123,24 +123,26 @@ Execution rules
 
 ---
 
-### 7) Audio Engine (Tone.js)
-// Implemented subset for intervals; chords/progressions pending
-- [ ] `lib/audio/transport.ts`
+### 7) Audio Engine (Tone.js) ✅ **COMPLETED FOR INTERVALS**
+// Intervals fully working; chords/progressions pending
+- [x] `lib/audio/transport.ts` ✅ **FIXED & WORKING**
   - [x] `ensureAudioReady()` — unlock on first gesture
-  - [x] `playContext({ key, mode })` — tonic context arpeggio
-  - [x] `playInterval({ key, interval, direction })` — asc/desc/harm
+  - [x] `playContext({ key, mode })` — brief tonic reference (simplified from arpeggio)
+  - [x] `playInterval({ key, interval, direction })` — asc/desc/harm (fixed Tone.js v15.1.22 API)
   - [ ] `playChord({ key, quality, inversion })`
   - [ ] `playProgression({ key, pattern })`
-  - [x] Cleanup: cancel scheduled events between prompts
-- [ ] Guard imports: Only used in client components; dynamic import if needed
+  - [x] Cleanup: proper timing & disposal to prevent conflicts
+- [x] Guard imports: Tone.js properly imported in client components
+  - **Note**: Upgraded Tone.js from v14.9.17 to v15.1.22 to fix API issues
 
 ---
 
 ### 8) Theory Builders (tonal)
-- [x] `lib/theory/intervals.ts`
-  - [ ] Choose interval from allowed set; direction asc/desc/harm
-  - [ ] Constrain register for clarity; return `PromptPayload`
-  - [ ] `isCorrectInterval()` helper
+- [x] `lib/theory/intervals.ts` ✅ **COMPLETED**
+  - [x] Choose interval from allowed set; direction asc/desc/harm ✅ **RANDOMIZED**
+  - [x] Randomized key selection (C, D, E, F, G, A, B) ✅ **ADDED**
+  - [x] Return proper `PromptPayload` with interval in tonal format
+  - [x] `isCorrectInterval()` helper ✅ **WORKING**
 - [ ] `lib/theory/chords.ts`
   - [ ] Qualities {maj, min, dim, aug}; inversion 0|1|2; return payload
 - [ ] `lib/theory/progressions.ts`
@@ -160,16 +162,19 @@ Execution rules
 
 ---
 
-### 10) Interval Drill (UI + Flow)
-- [ ] `components/KeySelector.tsx`
-- [ ] `components/IntervalAnswerGrid.tsx` (m2..P8 incl. tritone)
-- [ ] `components/DrillShell.tsx` shared layout: Play/Replay, feedback, footer stats
-- [x] `app/practice/intervals/page.tsx` (client)
-  - [x] `useEffect(ensureAudioReady)` on mount
-  - [x] `onNext()`: build prompt → play context → play interval → set pending
-  - [ ] `onAnswer(choice)`: compute correctness → feedback → POST attempt → update adaptivity → `onNext()`
-  - [ ] Render accuracy, streak, session count
-- [ ] Verify: first sound <3s after gesture; no overlap; toast feedback
+### 10) Interval Drill (UI + Flow) ✅ **MOSTLY COMPLETED**
+- [ ] `components/KeySelector.tsx` (not needed yet - using random keys)
+- [x] Interval answer grid inline (m2..P8 incl. tritone) ✅ **WORKING**
+- [ ] `components/DrillShell.tsx` shared layout (can be extracted later)
+- [x] `app/practice/intervals/page.tsx` (client) ✅ **FULLY FUNCTIONAL**
+  - [x] Audio unlock on first user gesture (not on mount) ✅ **FIXED**
+  - [x] `onNext()`: build prompt → play context → play interval → set pending ✅ **WORKING**
+  - [x] `onAnswer(choice)`: compute correctness → feedback → auto-advance on correct ✅ **WORKING**
+  - [x] Replay functionality ✅ **WORKING**
+  - [x] Proper loading states and disabled buttons during playback
+  - [ ] POST attempt to API (not implemented yet)
+  - [ ] Display real user stats (accuracy, streak, session count)
+- [x] Verified: first sound <3s after gesture; no overlap; proper feedback ✅ **WORKING**
 
 ---
 
@@ -268,21 +273,30 @@ Execution rules
 - [x] Lint/type: `npm run lint` | `npm run typecheck` ✅
 - [x] Auth secret: `npx auth secret` ✅ (already generated)
 
-**Current Status**: Auth system fully working with Google + OTP; OTP email via Resend (or console fallback). shadcn/ui components setup completed via CLI.
+**Current Status**: Core interval training is fully functional! Audio engine working with Tone.js v15.1.22. Users can practice interval recognition with proper tonal context, randomized keys/intervals, immediate feedback, and replay functionality.
 
 ---
 
-- [x] **PARTIAL** ✅ Google + OTP operational with safe throttling (magic link removed by scope)
-- [ ] Intervals, Chords, Progressions playable with tonal context and correct checks
+- [x] ✅ Google + OTP operational with safe throttling (magic link removed by scope)
+- [x] ✅ **Intervals playable with tonal context and correct checks** (**NEW - COMPLETED**)
+- [ ] Chords, Progressions playable with tonal context and correct checks  
 - [ ] Attempts persisted; `UserStat` totals, streak, heatmaps accurate
 - [ ] Adaptivity bias influences next item; Stats UI reflects progress
-- [ ] First sound consistently <3s after gesture; no overlapping audio between prompts
+- [x] ✅ **First sound consistently <3s after gesture; no overlapping audio** (**NEW - COMPLETED**)
 - [ ] Deployed to production; basic monitoring in place
 
-**✅ MAJOR MILESTONES**: 
-- Authentication system is fully operational!
-- shadcn/ui components setup completed via CLI (all components properly installed)
+**✅ MAJOR MILESTONES COMPLETED**: 
+- Authentication system is fully operational! ✅
+- shadcn/ui components setup completed via CLI ✅
+- **Audio engine fully functional for intervals!** ✅ **NEW**
+- **Interval drill working end-to-end!** ✅ **NEW**
 
-**Next Priority**: Audio engine and interval drill implementation
+**Current Status**: Core interval training is working! Users can:
+- Practice interval recognition with proper tonal context
+- Hear randomized keys and intervals (asc/desc/harmonic)
+- Get immediate feedback and auto-advance
+- Replay intervals as needed
+
+**Next Priority**: Attempts API implementation for progress tracking
 
 
