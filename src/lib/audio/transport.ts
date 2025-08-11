@@ -55,8 +55,8 @@ export async function ensureAudioReady(): Promise<void> {
   if (Tone.getContext().state !== "running") {
     await Tone.start();
   }
-  // Begin loading the piano sampler in the background for low first-sound latency
-  void initPiano();
+  // Ensure the piano sampler is fully loaded before marking audio ready
+  await initPiano();
 }
 
 export async function cleanupAudio(): Promise<void> {
