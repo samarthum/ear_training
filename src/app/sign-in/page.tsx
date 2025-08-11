@@ -49,7 +49,7 @@ export default function SignInPage() {
       <h1 className="text-3xl font-bold mb-6">Sign in</h1>
       <div className="space-y-4">
         <button
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           className="w-full rounded-md bg-blue-600 text-white px-4 py-2 font-semibold hover:bg-blue-700"
         >
           Continue with Google
