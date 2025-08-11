@@ -64,14 +64,19 @@ const useAdapter = Boolean(process.env.DATABASE_URL);
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET ?? "dev-secret",
   adapter: useAdapter ? (PrismaAdapter(prisma) as any) : undefined,
-  session: { strategy: useAdapter ? "database" : "jwt" },
+  session: { strategy: "jwt" }, // Always use JWT strategy for compatibility with Credentials provider
   providers,
   callbacks: {
-    async session({ session, user, token }) {
-      const userId = (user as any)?.id ?? (token as any)?.id;
-      if (userId) {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token?.id) {
         // @ts-expect-error augment at runtime
-        session.user.id = userId;
+        session.user.id = token.id;
       }
       return session;
     },
