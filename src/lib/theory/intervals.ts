@@ -1,4 +1,4 @@
-import type { PromptPayload } from "@/types/drills";
+import type { IntervalPrompt } from "@/types/drills";
 
 const INTERVALS = [
   "m2",
@@ -34,7 +34,7 @@ const intervalToTonal: Record<IntervalLabel, string> = {
   P8: "8P",
 };
 
-export function buildIntervalPrompt(key = "C"): PromptPayload {
+export function buildIntervalPrompt(key = "C"): IntervalPrompt {
   const label = INTERVALS[Math.floor(Math.random() * INTERVALS.length)];
   const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
   return {
@@ -46,8 +46,7 @@ export function buildIntervalPrompt(key = "C"): PromptPayload {
   };
 }
 
-export function isCorrectInterval(prompt: PromptPayload, answer: IntervalLabel): boolean {
-  if (prompt.kind !== "INTERVAL") return false;
+export function isCorrectInterval(prompt: IntervalPrompt, answer: IntervalLabel): boolean {
   return intervalToTonal[answer] === prompt.interval;
 }
 

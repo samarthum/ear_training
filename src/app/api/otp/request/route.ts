@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { hash } from "bcryptjs";
+import { sendOtpEmail } from "@/lib/mail/send";
 
 const RequestSchema = z.object({ email: z.string().email() });
 
@@ -27,8 +28,8 @@ export async function POST(req: Request) {
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
   await prisma.otpCode.create({ data: { identifier: email, codeHash, expiresAt } });
 
-  // TODO: send email via provider; intentionally do not disclose existence
-  console.log(`[otp] Sent code ${code} to ${email}`);
+  // Send email via provider (or console fallback in dev)
+  await sendOtpEmail(email, code);
 
   return NextResponse.json({ ok: true });
 }

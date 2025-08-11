@@ -2,11 +2,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { ensureAudioReady, playContext, playInterval, cleanupAudio } from "@/lib/audio/transport";
 import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval } from "@/lib/theory/intervals";
-import type { PromptPayload } from "@/types/drills";
+import type { IntervalPrompt } from "@/types/drills";
 
 export default function IntervalsPracticePage() {
   const [ready, setReady] = useState(false);
-  const [pending, setPending] = useState<PromptPayload | null>(null);
+  const [pending, setPending] = useState<IntervalPrompt | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
 
   useEffect(() => {

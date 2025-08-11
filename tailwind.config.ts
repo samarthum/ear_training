@@ -14,5 +14,6 @@ export default {
       },
     },
   },
-  plugins: [],
+  darkMode: "class",
+  plugins: [require("tailwindcss-animate")],
 } satisfies Config;

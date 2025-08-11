@@ -20,4 +20,6 @@ export type PromptPayload =
       steps: Array<"I" | "ii" | "IV" | "V" | "vi">;
     };
 
+export type IntervalPrompt = Extract<PromptPayload, { kind: "INTERVAL" }>;
+
 

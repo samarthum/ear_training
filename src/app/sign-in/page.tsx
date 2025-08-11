@@ -56,31 +56,6 @@ export default function SignInPage() {
         </button>
 
         <div className="border-t pt-4">
-          <h2 className="font-semibold mb-2">Magic link</h2>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              try {
-                await signIn("email", { email, redirect: false });
-              } catch {}
-            }}
-            className="space-y-2"
-          >
-            <input
-              type="email"
-              className="w-full border rounded-md px-3 py-2"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button className="w-full rounded-md bg-gray-900 text-white px-4 py-2 font-semibold hover:opacity-90">
-              Send magic link
-            </button>
-          </form>
-        </div>
-
-        <div className="border-t pt-4">
           <h2 className="font-semibold mb-2">OTP Code</h2>
           <div className="space-y-2">
             <input
