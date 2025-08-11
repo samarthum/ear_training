@@ -1,11 +1,62 @@
 "use client";
 import * as Tone from "tone";
-import { Note, Interval } from "tonal";
+import { Note } from "tonal";
+
+// Lazy-initialized instruments
+let piano: Tone.Sampler | null = null;
+let pianoLoaded = false;
+let pianoLoading: Promise<void> | null = null;
+let fallbackPoly: Tone.PolySynth<Tone.Synth> | null = null;
+
+function getFallbackPoly(): Tone.PolySynth<Tone.Synth> {
+  if (!fallbackPoly) {
+    fallbackPoly = new Tone.PolySynth(Tone.Synth).toDestination();
+    fallbackPoly.set({ volume: -4 });
+  }
+  return fallbackPoly;
+}
+
+async function initPiano(): Promise<void> {
+  if (pianoLoading) return pianoLoading;
+  pianoLoading = new Promise<void>((resolve) => {
+    piano = new Tone.Sampler({
+      urls: {
+        A1: "A1.mp3",
+        C2: "C2.mp3",
+        F2: "F2.mp3",
+        A2: "A2.mp3",
+        C3: "C3.mp3",
+        F3: "F3.mp3",
+        A3: "A3.mp3",
+        C4: "C4.mp3",
+        F4: "F4.mp3",
+        A4: "A4.mp3",
+        C5: "C5.mp3",
+      },
+      baseUrl: "https://tonejs.github.io/audio/salamander/",
+      onload: () => {
+        pianoLoaded = true;
+        if (piano) {
+          piano.volume.value = -6;
+        }
+        resolve();
+      },
+    }).toDestination();
+  });
+  return pianoLoading;
+}
+
+function getInstrument(): Tone.PolySynth<Tone.Synth> | Tone.Sampler {
+  if (pianoLoaded && piano) return piano;
+  return getFallbackPoly();
+}
 
 export async function ensureAudioReady(): Promise<void> {
   if (Tone.getContext().state !== "running") {
     await Tone.start();
   }
+  // Begin loading the piano sampler in the background for low first-sound latency
+  void initPiano();
 }
 
 export async function cleanupAudio(): Promise<void> {
@@ -17,69 +68,33 @@ export async function cleanupAudio(): Promise<void> {
 }
 
 export async function playContext(key: string): Promise<void> {
-  const synth = new Tone.Synth().toDestination();
-  const startTime = Tone.now() + 0.1; // Small offset to avoid timing conflicts
-  
-  // Play just a brief tonic reference - single note to establish key center
-  synth.triggerAttackRelease(`${key}3`, "4n", startTime);
-  
-  // Clean up synth after brief playback
-  setTimeout(() => {
-    synth.dispose();
-  }, 800);
+  const inst = getInstrument();
+  const startTime = Tone.now() + 0.1; // small offset to avoid timing conflicts
+  inst.triggerAttackRelease(`${key}3`, "4n", startTime);
 }
 
 export async function playInterval(args: {
   key: string;
-  interval: string; // like "3m" or "5P"  
+  interval: string; // like "3m" or "5P"
   direction: "asc" | "desc" | "harm";
 }): Promise<void> {
-  const synth = new Tone.Synth().toDestination();
-  const startTime = Tone.now() + 0.1; // Small offset to avoid timing conflicts
+  const inst = getInstrument();
+  const startTime = Tone.now() + 0.1; // small offset to avoid timing conflicts
   const root = `${args.key}4`;
-  
+
   if (args.direction === "harm") {
-    // Harmonic interval: both notes simultaneously
-    synth.triggerAttackRelease(root, "2n", startTime);
-    synth.triggerAttackRelease(Note.transpose(root, args.interval), "2n", startTime);
+    // Play both notes as a single polyphonic event to avoid same-time scheduling errors
+    const second = Note.transpose(root, args.interval);
+    inst.triggerAttackRelease([root, second], "2n", startTime);
   } else {
     // Melodic interval: two notes in sequence
     const firstNote = root;
-    const secondNote = args.direction === "asc" 
-      ? Note.transpose(root, args.interval)     // Ascending: root -> up interval
-      : Note.transpose(root, `-${args.interval}`); // Descending: root -> down interval
-    
-    synth.triggerAttackRelease(firstNote, "4n", startTime);
-    synth.triggerAttackRelease(secondNote, "4n", startTime + 0.6);
-  }
-  
-  // Clean up synth after playback  
-  setTimeout(() => {
-    synth.dispose();
-  }, 1800);
-}
+    const secondNote =
+      args.direction === "asc"
+        ? Note.transpose(root, args.interval)
+        : Note.transpose(root, `-${args.interval}`);
 
-function normalizeInterval(iv: string): string {
-  // Accept forms like "m3" or tonal style like "3m"; coerce to tonal's expected format
-  if (/^[mMPAd][0-9]+$/.test(iv)) {
-    // already like m3/M3/P5 etc - convert to tonal style
-    const q = iv[0];
-    const n = iv.slice(1);
-    return `${n}${q}`; // to tonal style e.g. 3m
-  }
-  return iv; // assume tonal style e.g. 3m, 5P
-}
-
-function invertInterval(iv: string): string {
-  try {
-    const normalized = normalizeInterval(iv);
-    // tonal Interval.invert works with tonal format like "3m"
-    const inverted = Interval.invert(normalized);
-    return inverted || normalized;
-  } catch (error) {
-    console.warn("Error inverting interval:", error);
-    return iv;
+    inst.triggerAttackRelease(firstNote, "4n", startTime);
+    inst.triggerAttackRelease(secondNote, "4n", startTime + 0.6);
   }
 }
-
-
