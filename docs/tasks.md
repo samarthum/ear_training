@@ -106,8 +106,10 @@ Execution rules
 
 ---
 
-### 5) Base Pages & Layout
-- [ ] `/(marketing)/page.tsx` with CTA → `/sign-in`
+### 5) Base Pages & Layout ✅ UPDATED
+- [x] `/(marketing)/page.tsx` — landing page implemented with design tokens and marketing components
+  - [x] Navbar, Hero, Features, Demo (no audio runtime), How‑it‑works, Preview, Pricing, WaitlistForm, FAQ, Footer
+  - [x] Minimal client JS (Reveal + waitlist localStorage), a11y landmarks/aria labels
 - [x] `/dashboard/page.tsx` shell
   - [ ] Shows placeholders for accuracy, streak, last 7 days, links to drills
 - [x] Root layout includes Tailwind CSS
@@ -250,6 +252,7 @@ Execution rules
 ---
 
 ### 18) Deployment (Vercel + Neon)
+- [x] Configure build to generate Prisma client on Vercel (`prisma generate && next build`)
 - [ ] Create Vercel project; connect repo
 - [ ] Set env vars: `DATABASE_URL`, `AUTH_*`, email provider, `AUTH_TRUST_HOST=true`
 - [ ] Deploy preview; verify auth callbacks and route handlers
@@ -273,7 +276,7 @@ Execution rules
 - [x] Lint/type: `npm run lint` | `npm run typecheck` ✅
 - [x] Auth secret: `npx auth secret` ✅ (already generated)
 
-**Current Status**: Core interval training is fully functional! Audio engine working with Tone.js v15.1.22. Users can practice interval recognition with proper tonal context, randomized keys/intervals, immediate feedback, and replay functionality.
+**Current Status**: Marketing landing page implemented and deployed-ready. Core interval training is fully functional (Tone.js v15.1.22). Users can practice interval recognition with proper tonal context, randomized keys/intervals, immediate feedback, and replay functionality.
 
 ---
 
@@ -284,6 +287,11 @@ Execution rules
 - [ ] Adaptivity bias influences next item; Stats UI reflects progress
 - [x] ✅ **First sound consistently <3s after gesture; no overlapping audio** (**NEW - COMPLETED**)
 - [ ] Deployed to production; basic monitoring in place
+  
+**Landing Page Notes**
+- SSR-first marketing page, brand tokens in `globals.css`, shadcn `Button` enhanced (brand variants), added `Badge`
+- New marketing components under `src/components/marketing/*`
+- `/sign-in` prerender issue fixed; OTP/Auth routes configured for Node runtime on Vercel
 
 **✅ MAJOR MILESTONES COMPLETED**: 
 - Authentication system is fully operational! ✅

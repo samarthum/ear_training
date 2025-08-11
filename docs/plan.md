@@ -60,8 +60,8 @@ Tasks
   - `lib/mail/send.ts` wrapper for Resend/Postmark/Mailgun
   - Simple HTML templates for magic link and OTP email
 - Basic pages
-  - `/(marketing)/page.tsx` with CTA → Start practicing
-  - `/sign-in/page.tsx` with tabs: Google | Magic Link | OTP; show OTP request/verify flows
+  - `/(marketing)/page.tsx` — landing page using design tokens and marketing components (Navbar, Hero, Features, Demo, How‑it‑works, Preview, Pricing, Waitlist, FAQ, Footer) with CTAs to waitlist and sign‑in
+  - `/sign-in/page.tsx` with Google and OTP flows; OTP request/verify wired
   - `/dashboard/page.tsx` shell with placeholders for streak/accuracy/links
 
 Acceptance Criteria
@@ -71,6 +71,8 @@ Acceptance Criteria
 - Database is provisioned on Neon; Prisma client connects; adapter tables created
 - `/dashboard` redirects unauthenticated users to `/sign-in`
 - CI: Typecheck + lint pass on PRs
+- Marketing landing page renders with light/dark support and passes Lighthouse ≥95 (Perf/Accessibility/SEO) on desktop
+- Vercel build succeeds with Prisma client generation during build
 
 ### M2 — Interval Drill E2E
 
