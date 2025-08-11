@@ -1,12 +1,21 @@
 "use client";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
+  const { status } = useSession();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
 
   const requestOtp = async () => {
     setLoading(true);
@@ -43,6 +52,10 @@ export default function SignInPage() {
       setLoading(false);
     }
   };
+
+  if (status === "authenticated") {
+    return null;
+  }
 
   return (
     <div className="container mx-auto p-8 max-w-lg">
