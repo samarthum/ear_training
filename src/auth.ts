@@ -56,6 +56,8 @@ providers.push(
 const useAdapter = Boolean(process.env.DATABASE_URL);
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  // Ensure Node runtime to allow bcryptjs in server environment
+  // Note: pages and route handlers can override with export const runtime = "nodejs"
   secret: process.env.AUTH_SECRET ?? "dev-secret",
   adapter: useAdapter ? PrismaAdapter(prisma) : undefined,
   session: { strategy: "jwt" }, // Always use JWT strategy for compatibility with Credentials provider
