@@ -17,11 +17,8 @@ export async function AppHeader({ className }: AppHeaderProps) {
       <div
         className={cn(
           "mx-auto w-[min(1120px,92vw)] flex items-center justify-between gap-4",
-          "py-3 backdrop-blur-md",
+          "py-3 backdrop-blur-md bg-brand-header",
         )}
-        style={{
-          background: "color-mix(in oklab, var(--brand-bg) 75%, transparent)",
-        }}
       >
         <Link
           href="/dashboard"

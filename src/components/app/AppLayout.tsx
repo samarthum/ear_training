@@ -9,7 +9,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children, className }: AppLayoutProps) {
   return (
-    <div className="min-h-screen" style={{ background: "var(--brand-bg)" }}>
+    <div className="min-h-screen bg-brand">
       <AppHeader />
       <main className={cn(
         "mx-auto w-[min(1120px,92vw)] py-8",

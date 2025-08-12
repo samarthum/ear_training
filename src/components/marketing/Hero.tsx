@@ -8,7 +8,7 @@ export function Hero() {
     <section className="marketing-hero-bg marketing-grid-overlay text-center py-20 sm:py-24">
       <Container>
         <div className="inline-flex items-center gap-2 mb-4">
-          <span className="size-1.5 rounded-full" style={{ background: "var(--brand-accent)" }} />
+          <span className="size-1.5 rounded-full bg-brand-accent" />
           <Badge variant="brand">Ultra‑minimal, musically real</Badge>
         </div>
         <h1 className="text-balance text-[clamp(34px,6vw,64px)] font-bold tracking-tight leading-[1.05]">

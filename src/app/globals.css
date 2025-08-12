@@ -155,6 +155,25 @@
       var(--brand-bg);
   }
 
+  /* Brand background utilities for performance optimization */
+  .bg-brand {
+    background: var(--brand-bg);
+  }
+
+  .bg-brand-panel {
+    background: var(--brand-panel);
+    box-shadow: var(--brand-shadow);
+    backdrop-filter: blur(20px);
+  }
+
+  .bg-brand-accent {
+    background: var(--brand-accent);
+  }
+
+  .bg-brand-header {
+    background: color-mix(in oklab, var(--brand-bg) 75%, transparent);
+  }
+
   .marketing-grid-overlay::before {
     content: "";
     position: fixed;

@@ -8,8 +8,7 @@ import { BrandMark } from "@/components/marketing/BrandMark";
 import Link from "next/link";
 
 export default function SignInPage() {
-  const sessionHook = useSession();
-  const status = sessionHook?.status ?? "unauthenticated";
+  const { status } = useSession();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -50,7 +49,7 @@ export default function SignInPage() {
         body: JSON.stringify({ email, code }),
       });
       if (!res.ok) throw new Error("Failed");
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
     } catch {
       setMessage("Invalid code or expired.");
     } finally {
@@ -79,14 +78,7 @@ export default function SignInPage() {
         </div>
 
         {/* Sign-in Panel */}
-        <div 
-          className="w-full max-w-md rounded-xl p-8 border border-[color:var(--brand-line)]"
-          style={{
-            background: "var(--brand-panel)",
-            boxShadow: "var(--brand-shadow)",
-            backdropFilter: "blur(20px)"
-          }}
-        >
+        <div className="w-full max-w-md rounded-xl p-8 border border-[color:var(--brand-line)] bg-brand-panel">
           <div className="space-y-6">
             <Button
               onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
