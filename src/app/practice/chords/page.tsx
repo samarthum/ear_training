@@ -1,4 +1,3 @@
-"use client";
 import { AppLayout } from "@/components/app/AppLayout";
 import { PracticeInterface } from "@/components/app/PracticeInterface";
 
