@@ -1,6 +1,8 @@
 ## Ear Training MVP — Delivery Plan
 
-This plan operationalizes the MVP described in `spec.md` and the guidance in `CLAUDE.md`. It is organized by milestones, detailed tasks, file scaffolding, acceptance criteria, testing, deployment, and risks. Target stack: Next.js 14 (App Router) + TypeScript + Tailwind + shadcn/ui; Auth.js v5; Prisma + Neon Postgres; Tone.js; tonal.
+This plan operationalizes the MVP described in `spec.md` and the guidance in `CLAUDE.md`. It is organized by milestones, detailed tasks, file scaffolding, acceptance criteria, testing, deployment, and risks. Target stack: Next.js 15 (App Router) + React 19 + TypeScript + Tailwind + shadcn/ui; Auth.js v5; Prisma + Neon Postgres; Tone.js; tonal.
+
+Note: We standardized on a server-first app architecture. Server pages render shared layout (`AppLayout` + `AppHeader`), and interactive drill logic lives in client components rendered inside those pages. Sessions currently use JWT strategy for credentials compatibility; DB sessions can be adopted later if needed.
 
 ### Goals (v0)
 - Functional pitch hearing in tonal context: ≥80–90% accuracy on core intervals
@@ -26,7 +28,7 @@ Parallelizable tracks: UI scaffolding, audio helpers, theory builders, infra/dep
 
 ## Work Breakdown by Milestone
 
-### M1 — Foundation: Repo, UI system, Auth (Google + Magic Link + OTP), DB
+### M1 — Foundation: Repo, UI system, Auth (Google + OTP; magic link out of scope), DB
 
 Epics
 - Project scaffolding and DX
@@ -92,7 +94,7 @@ Tasks
   - Builder returning `PromptPayload` with `interval` and `direction`
   - Utilities for correctness check and note math; limit register for clarity
 - UI pages/components
-  - `app/practice/intervals/page.tsx` (client): next/replay flow, latency timing
+  - `app/practice/intervals/page.tsx` (server wrapper) + `components/practice/IntervalsPracticeClient.tsx` (client): next/replay flow, latency timing
   - `components/DrillShell.tsx` (shared layout, key selector, play/answer controls)
   - `components/IntervalAnswerGrid.tsx` listing m2..P8 + Tritone
   - Toast feedback and correct label rendering
@@ -213,11 +215,12 @@ Acceptance Criteria
 
 ### Auth
 - Root `auth.ts` with `NextAuth({...})` exporting `{ handlers, auth, signIn, signOut }`
-- Providers: `Google`, `Email` (magic link), `Credentials` (OTP)
+- Providers: `Google`, `Credentials` (OTP)
+  - Note: Magic link is out of scope for MVP and not implemented.
 - Adapter: `PrismaAdapter(prisma)`
-- Session: `{ strategy: "database" }` (per spec); callbacks attach `user.id`
+- Session: `{ strategy: "jwt" }` in current implementation for Credentials compatibility; DB sessions can be adopted later if needed.
 - Route handler: `app/api/auth/[...nextauth]/route.ts` re‑exports `{ GET, POST }`
-- Middleware protects `/dashboard` and `/practice/*` as needed
+- Middleware protects `/dashboard`, `/practice/*`, and handles `/sign-in` redirect if already authenticated
 - OTP
   - Issue: bcrypt hash of 6‑digit code + salt; TTL 10m; throttle issuance by email/IP; store attempts
   - Verify: lookup latest unconsumed code; check expiry/hash/attempts; mark consumed; `signIn("credentials")`
@@ -258,6 +261,7 @@ Acceptance Criteria
 - Feedback: toast for correct/try again; show correct label; replay
 - Footer metrics: accuracy %, streak, session count
 - Loading & disabled states for audio unlock and network calls
+- Header/navigation: `AppHeader` is a Server Component guarded with `server-only`; `AppLayout` renders it server-side while practice pages render client children for interactivity.
 
 ---
 
@@ -268,11 +272,11 @@ Unit
 - Utility functions: date diff for streaks; weighted sampler
 
 Integration
-- API route handlers: attempts creation + stats upsert; OTP issue/verify + throttling; magic link handler flow
+- API route handlers: attempts creation + stats upsert; OTP issue/verify + throttling
 - Auth callbacks attach `user.id` to session
 
-E2E (Playwright)
-- Sign‑in flows (Google mocked), magic link (stub email delivery), OTP happy/edge cases
+- E2E (Playwright)
+- Sign‑in flows (Google mocked), OTP happy/edge cases
 - Interval drill loop: context → prompt → answer → store attempt → feedback → next
 
 Manual QA (Audio)
@@ -335,13 +339,13 @@ Operational Notes
 
 ## Task Checklist (condensed)
 
-- [ ] Init repo, Next.js, Tailwind, shadcn/ui, ESLint/Prettier
-- [ ] Prisma schema + Neon; `prisma db push`
-- [ ] `auth.ts` + route handlers; providers configured
-- [ ] OTP endpoints + emails + throttling
-- [ ] Marketing, Sign‑in, Dashboard shells
-- [ ] Audio helpers (ensureAudioReady, playContext, playInterval, cleanup)
-- [ ] Interval theory builder + UI + Attempts API integration
+- [x] Init repo, Next.js, Tailwind, shadcn/ui, ESLint/Prettier
+- [x] Prisma schema + Neon; `prisma db push` (local SQLite for dev; Neon for prod later)
+- [x] `auth.ts` + route handlers; providers configured (Google + OTP; magic link deferred)
+- [x] OTP endpoints + emails + throttling
+- [x] Marketing, Sign‑in, Dashboard shells
+- [x] Audio helpers (ensureAudioReady, playContext, playInterval, cleanup)
+- [x] Interval theory builder + UI (client) — Attempts API integration pending
 - [ ] Chord + Progression theory & audio; UI grids
 - [ ] Adaptivity bias + integration
 - [ ] Stats API + dashboard widgets

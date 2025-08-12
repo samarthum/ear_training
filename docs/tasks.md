@@ -113,6 +113,8 @@ Execution rules
 - [x] `/dashboard/page.tsx` shell
   - [ ] Shows placeholders for accuracy, streak, last 7 days, links to drills
 - [x] Root layout includes Tailwind CSS
+  - [x] Fixed `/sign-in` 500 by removing `useSession` and relying on middleware redirects
+  - [x] Adopted server page + client child pattern for practice pages; guarded `AppHeader` with `server-only` to prevent client import
 
 ---
 
@@ -168,7 +170,7 @@ Execution rules
 - [ ] `components/KeySelector.tsx` (not needed yet - using random keys)
 - [x] Interval answer grid inline (m2..P8 incl. tritone) ✅ **WORKING**
 - [ ] `components/DrillShell.tsx` shared layout (can be extracted later)
-- [x] `app/practice/intervals/page.tsx` (client) ✅ **FULLY FUNCTIONAL**
+- [x] `app/practice/intervals/page.tsx` (server wrapper) + `components/practice/IntervalsPracticeClient.tsx` (client) ✅ **FULLY FUNCTIONAL**
   - [x] Audio unlock on first user gesture (not on mount) ✅ **FIXED**
   - [x] `onNext()`: build prompt → play context → play interval → set pending ✅ **WORKING**
   - [x] `onAnswer(choice)`: compute correctness → feedback → auto-advance on correct ✅ **WORKING**
