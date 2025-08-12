@@ -1,25 +1,18 @@
 "use client";
 export const dynamic = "force-dynamic";
-import { useEffect, useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/marketing/BrandMark";
 import Link from "next/link";
 
 export default function SignInPage() {
-  const { status } = useSession();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/dashboard");
-    }
-  }, [status, router]);
 
   const requestOtp = async () => {
     setLoading(true);
@@ -56,10 +49,6 @@ export default function SignInPage() {
       setLoading(false);
     }
   };
-
-  if (status === "authenticated") {
-    return null;
-  }
 
   return (
     <div className="min-h-screen marketing-hero-bg marketing-grid-overlay">
