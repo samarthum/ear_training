@@ -8,8 +8,8 @@ This is an ear training web application MVP for beginner-intermediate musicians,
 
 ## Tech Stack
 
-- **Framework**: Next.js 14+ with App Router, TypeScript, Tailwind CSS, shadcn/ui
-- **Authentication**: Auth.js (NextAuth v5) with Google OAuth, Email magic link, and Email OTP
+- **Framework**: Next.js 15 with App Router + React 19, TypeScript, Tailwind CSS, shadcn/ui
+- **Authentication**: Auth.js (NextAuth v5) with Google OAuth and Email OTP (magic link optional/out of scope currently)
 - **Database**: Neon Postgres with Prisma ORM and @auth/prisma-adapter  
 - **Audio**: Tone.js for audio synthesis and playback (client-side only)
 - **Music Theory**: tonal library for music theory utilities
@@ -28,6 +28,7 @@ This is an ear training web application MVP for beginner-intermediate musicians,
 - **New Configuration Pattern**: Root `auth.ts` file with `export const { handlers, auth, signIn, signOut } = NextAuth({...})`
 - **Environment Variables**: Use `AUTH_*` prefix instead of `NEXTAUTH_*` (e.g., `AUTH_SECRET`, `AUTH_GOOGLE_ID`)
 - **Edge Compatibility**: Separate `auth.config.ts` for middleware without database adapters
+- **Session Strategy**: Using JWT in this repo to support Credentials provider and avoid Edge runtime issues; DB sessions can be adopted later if needed.
 
 ### Prisma ORM Latest
 - **JSON Protocol**: Now default in v5+ (remove from previewFeatures)
@@ -40,6 +41,7 @@ This is an ear training web application MVP for beginner-intermediate musicians,
 - **Transport Scheduling**: Use `Tone.Transport` for precise timing and synchronization
 - **Proper Disposal**: Dispose audio nodes between questions to prevent overlapping
 - **Context Management**: Use `Tone.now()` for accurate scheduling relative to AudioContext
+ - **Client-Only**: Import Tone.js exclusively in client components; do not import from Server Components.
 
 ### Tailwind CSS Modern Patterns  
 - **Utility-First Composition**: Prefer `className="flex items-center gap-4"` over custom CSS
@@ -60,6 +62,7 @@ This is an ear training web application MVP for beginner-intermediate musicians,
 - **Auth**: Root config in `auth.ts`, handlers at `/app/api/auth/[...nextauth]/route.ts`
 - **Database**: Prisma client singleton with Neon DATABASE_URL
 - **State**: Drill attempts POST to API → DB, UserStat counters updated synchronously
+ - **Server-first pattern**: Server pages render shared layout (`AppLayout` + `AppHeader`), and interactive drill logic lives in client components rendered as children. Guard server-only components with `import 'server-only'`.
 
 ## Key Development Commands
 
@@ -187,7 +190,7 @@ Three auth methods:
 ```typescript
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
-import Email from "next-auth/providers/email"
+// Email magic link provider is optional and currently out-of-scope
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "./lib/db/prisma"
@@ -199,11 +202,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Google,
-    Email({
-      // Email magic link configuration
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
-    }),
     Credentials({
       // OTP implementation
       credentials: {
@@ -272,20 +270,27 @@ export const { GET, POST } = handlers
 
 #### Middleware (`middleware.ts`)  
 ```typescript
-import authConfig from "./auth.config"
-import NextAuth from "next-auth"
+import { auth } from "@/auth"
 
-const { auth } = NextAuth(authConfig)
+export default auth((request) => {
+  const { nextUrl, auth: session } = request
 
-export default auth((req) => {
-  // Custom middleware logic
-  if (!req.auth && req.nextUrl.pathname.startsWith("/dashboard")) {
-    return Response.redirect(new URL("/sign-in", req.url))
+  if (nextUrl.pathname === '/sign-in' && session?.user) {
+    const url = new URL('/dashboard', nextUrl)
+    return Response.redirect(url)
   }
+
+  const isProtected = nextUrl.pathname === '/dashboard' || nextUrl.pathname.startsWith('/practice')
+  if (isProtected && !session?.user) {
+    const signInUrl = new URL('/sign-in', nextUrl)
+    return Response.redirect(signInUrl)
+  }
+
+  return Response.next()
 })
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ['/sign-in', '/dashboard', '/practice/:path*']
 }
 ```
 
@@ -295,11 +300,7 @@ import { auth } from "@/auth"
 
 export default async function DashboardPage() {
   const session = await auth()
-  
-  if (!session?.user) {
-    redirect("/sign-in")
-  }
-
+  if (!session?.user) redirect("/sign-in")
   return <div>Welcome {session.user.name}</div>
 }
 ```
@@ -317,8 +318,11 @@ export default async function DashboardPage() {
   /sign-in/page.tsx                # Custom sign-in with tabs
   /dashboard/page.tsx              # User dashboard
   /practice/                       # Drill pages
-    /intervals/page.tsx
-    /chords/page.tsx
+    /intervals/page.tsx              # Server wrapper page
+    /chords/page.tsx                 # Server page
+    /progressions/page.tsx           # Server page
+  /components
+    /practice/IntervalsPracticeClient.tsx   # Client drill logic for intervals
 
 /auth.ts                           # NextAuth v5 configuration
 /lib
