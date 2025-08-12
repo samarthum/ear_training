@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { ensureAudioReady, playContext, playInterval, cleanupAudio } from "@/lib/audio/transport";
 import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval, type IntervalLabel } from "@/lib/theory/intervals";
 import type { IntervalPrompt } from "@/types/drills";
+import { AppLayout } from "@/components/app/AppLayout";
+import { PracticeInterface } from "@/components/app/PracticeInterface";
+import { Button } from "@/components/ui/button";
 
 export default function IntervalsPracticePage() {
   const [audioReady, setAudioReady] = useState(false);
@@ -85,47 +88,33 @@ export default function IntervalsPracticePage() {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Interval Training</h1>
-      <div className="flex gap-2 mb-4">
-        <button
-          onClick={pending ? replayAudio : startPractice}
-          disabled={isPlaying || audioLoading}
-          className="rounded-md bg-black text-white px-4 py-2 disabled:opacity-50"
-        >
-          {audioLoading
-            ? "Loading piano..."
-            : isPlaying
-            ? "Playing..."
-            : pending
-            ? "🔄 Replay"
-            : "🎵 Start"}
-        </button>
-        {feedback && (
-          <div className="flex items-center">
-            <span className="text-sm font-medium">{feedback}</span>
-          </div>
-        )}
-      </div>
-      <div className="grid grid-cols-4 gap-2">
-        {INTERVAL_CHOICES.map((opt) => (
-          <button
-            key={opt.value}
-            disabled={!pending || isPlaying}
-            className="border rounded-md p-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            onClick={() => onAnswer(opt.label)}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-      
-      {pending && (
-        <div className="mt-4 text-sm text-gray-600">
-          <p><strong>Current:</strong> {pending.direction === "asc" ? "Ascending" : pending.direction === "desc" ? "Descending" : "Harmonic"} interval in {pending.key} major</p>
+    <AppLayout>
+      <PracticeInterface
+        title="Interval Training"
+        description="Listen to the tonal context (drone + I chord), then identify the interval you hear. All intervals are presented in major key context."
+        onStart={startPractice}
+        onReplay={replayAudio}
+        isPlaying={isPlaying}
+        isLoading={audioLoading}
+        feedback={feedback}
+        hasStarted={!!pending}
+        currentInfo={pending ? `${pending.direction === "asc" ? "Ascending" : pending.direction === "desc" ? "Descending" : "Harmonic"} interval in ${pending.key} major` : undefined}
+      >
+        <div className="grid grid-cols-4 gap-3">
+          {INTERVAL_CHOICES.map((opt) => (
+            <Button
+              key={opt.value}
+              variant="brand"
+              disabled={!pending || isPlaying}
+              className="aspect-square text-lg font-semibold hover:scale-105 transition-transform"
+              onClick={() => onAnswer(opt.label)}
+            >
+              {opt.label}
+            </Button>
+          ))}
         </div>
-      )}
-    </div>
+      </PracticeInterface>
+    </AppLayout>
   );
 }
 

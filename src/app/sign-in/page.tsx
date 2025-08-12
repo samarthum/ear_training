@@ -3,6 +3,9 @@ export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { BrandMark } from "@/components/marketing/BrandMark";
+import Link from "next/link";
 
 export default function SignInPage() {
   const sessionHook = useSession();
@@ -60,54 +63,109 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="container mx-auto p-8 max-w-lg">
-      <h1 className="text-3xl font-bold mb-6">Sign in</h1>
-      <div className="space-y-4">
-        <button
-          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-          className="w-full rounded-md bg-blue-600 text-white px-4 py-2 font-semibold hover:bg-blue-700"
-        >
-          Continue with Google
-        </button>
+    <div className="min-h-screen marketing-hero-bg marketing-grid-overlay">
+      <div className="flex flex-col justify-center items-center min-h-screen p-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-[color:var(--brand-text)] mb-4"
+          >
+            <BrandMark />
+            <span className="font-semibold tracking-tight text-xl">Ear Training</span>
+          </Link>
+          <h1 className="text-3xl font-bold text-[color:var(--brand-text)] mb-2">Welcome back</h1>
+          <p className="text-[color:var(--brand-muted)]">Sign in to continue your practice</p>
+        </div>
 
-        <div className="border-t pt-4">
-          <h2 className="font-semibold mb-2">OTP Code</h2>
-          <div className="space-y-2">
-            <input
-              type="email"
-              className="w-full border rounded-md px-3 py-2"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <div className="flex gap-2">
-              <button
-                onClick={requestOtp}
-                disabled={loading || !email}
-                className="flex-1 rounded-md bg-gray-100 px-4 py-2 border hover:bg-gray-200"
-              >
-                Request code
-              </button>
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                className="w-28 border rounded-md px-3 py-2"
-                placeholder="123456"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-              />
-              <button
-                onClick={verifyOtp}
-                disabled={loading || !email || code.length !== 6}
-                className="flex-1 rounded-md bg-black text-white px-4 py-2 font-semibold hover:opacity-90"
-              >
-                Verify & sign in
-              </button>
+        {/* Sign-in Panel */}
+        <div 
+          className="w-full max-w-md rounded-xl p-8 border border-[color:var(--brand-line)]"
+          style={{
+            background: "var(--brand-panel)",
+            boxShadow: "var(--brand-shadow)",
+            backdropFilter: "blur(20px)"
+          }}
+        >
+          <div className="space-y-6">
+            <Button
+              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              variant="brandPrimary"
+              size="lg"
+              className="w-full"
+            >
+              Continue with Google
+            </Button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-[color:var(--brand-line)]" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-[color:var(--brand-panel)] px-3 text-[color:var(--brand-muted)]">
+                  Or use email code
+                </span>
+              </div>
             </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-[color:var(--brand-text)] mb-2 block">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  className="w-full border border-[color:var(--brand-line)] rounded-lg px-3 py-2 bg-[color:var(--brand-bg)] text-[color:var(--brand-text)] placeholder-[color:var(--brand-muted)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-ring)]"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={requestOtp}
+                  disabled={loading || !email}
+                  variant="brand"
+                  className="flex-1"
+                >
+                  {loading ? "Sending..." : "Get code"}
+                </Button>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  className="w-24 border border-[color:var(--brand-line)] rounded-lg px-3 py-2 bg-[color:var(--brand-bg)] text-[color:var(--brand-text)] text-center placeholder-[color:var(--brand-muted)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-ring)]"
+                  placeholder="123456"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                />
+                <Button
+                  onClick={verifyOtp}
+                  disabled={loading || !email || code.length !== 6}
+                  variant="brandPrimary"
+                  className="flex-1"
+                >
+                  {loading ? "Verifying..." : "Sign in"}
+                </Button>
+              </div>
+            </div>
+
+            {message && (
+              <p className="text-sm text-[color:var(--brand-muted)] text-center">
+                {message}
+              </p>
+            )}
           </div>
         </div>
-        {message && <p className="text-sm text-muted-foreground">{message}</p>}
+
+        {/* Footer */}
+        <p className="text-[color:var(--brand-muted)] text-sm mt-8 text-center">
+          New to Ear Training?{" "}
+          <Link href="/" className="text-[color:var(--brand-accent)] hover:underline">
+            Learn more about our approach
+          </Link>
+        </p>
       </div>
     </div>
   );
