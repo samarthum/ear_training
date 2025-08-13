@@ -393,7 +393,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   return (
     <PracticeInterface
       title="Intervals"
-      description="Train melodic intervals in key context."
+      description="Train intervals in key context."
       onStart={startPractice}
       onReplay={replayAudio}
       isPlaying={isPlaying}
@@ -406,13 +406,10 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       {phase === "IDLE" && (
         <div className="text-center space-y-6 max-w-md mx-auto">
             <div className="space-y-3">
-              <div className="flex items-center justify-center gap-3 text-xl font-bold text-[color:var(--brand-text)]">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                </svg>
+              <div className="text-center text-xl font-bold text-[color:var(--brand-text)]">
                 Ready to practice intervals?
               </div>
-              <div className="text-sm text-[color:var(--brand-muted)] leading-relaxed">Challenge yourself to identify melodic intervals in musical context. Each session adapts to your skill level.</div>
+              <div className="text-sm text-[color:var(--brand-muted)] leading-relaxed">Challenge yourself to identify intervals in musical context. Each session adapts to your skill level.</div>
             </div>
             
             <div className="flex justify-center mb-3">
