@@ -345,45 +345,42 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   };
 
   const skip = async () => {
-    if (!pending || isPlaying || phase !== "RUNNING") return;
+    if (!pending || phase !== "RUNNING") return;
+    if (isPlaying) {
+      cleanupAudio();
+      setIsPlaying(false);
+    }
     const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
 
-    try {
-      setActionLoading("skip");
-      await fetch("/api/attempts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          drillId,
-          prompt: pending,
-          answer: { skipped: true },
-          isCorrect: false,
-          latencyMs,
-        }),
-      });
-    } catch (err) {
-      console.error("Failed to post skipped attempt", err);
-    }
-    setActionLoading(null);
+    // Fire-and-forget: don't block UI on network
+    fetch("/api/attempts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        drillId,
+        prompt: pending,
+        answer: { skipped: true },
+        isCorrect: false,
+        latencyMs,
+      }),
+    }).catch((err) => console.error("Failed to post skipped attempt", err));
 
+    // Update UI immediately
     setCompleted((n) => n + 1);
-    setFeedback("Skipped");
     setTotalLatencyMs((t) => t + latencyMs);
     const skippedLabel = (INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval) as IntervalLabel;
     setSessionStats((prev) => {
       const entry = prev[skippedLabel] || { seen: 0, correct: 0 };
       return { ...prev, [skippedLabel]: { seen: entry.seen + 1, correct: entry.correct } };
     });
-    setTimeout(() => {
-      setFeedback(null);
-      const nextCount = completed + 1;
-      if (nextCount < plannedQuestions) {
-        nextPrompt();
-      } else {
-        setPhase("REVIEW");
-        setPending(null);
-      }
-    }, 600);
+
+    const nextCount = completed + 1;
+    if (nextCount < plannedQuestions) {
+      nextPrompt();
+    } else {
+      setPhase("REVIEW");
+      setPending(null);
+    }
   };
 
   const accuracy = completed > 0 ? Math.round((correctCount / completed) * 100) : 0;
@@ -677,8 +674,8 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
           </div>
           
           <div className="flex w-full justify-between sm:w-auto sm:justify-normal sm:gap-2">
-            <Button variant="ghost" size="sm" disabled={!pending || isPlaying || actionLoading !== null} onClick={skip} className="text-[color:var(--brand-muted)]">
-              {actionLoading === "skip" ? (<><Spinner className="size-4" /> Skipping…</>) : "Skip"}
+            <Button variant="ghost" size="sm" disabled={!pending || isPlaying} onClick={skip} className="text-[color:var(--brand-muted)]">
+              Skip
             </Button>
             <Button 
               variant="ghost" 
