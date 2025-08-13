@@ -173,6 +173,7 @@ Execution rules
     - [ ] (Future) For chords/progressions, update `chordHeat`/`progressionHeat` similarly
   - [x] Streak logic: same day = keep; yesterday = +1; else reset=1
   - [x] Return `{ id, isCorrect, totals }`
+  - [x] Robustness: ensure `User` row exists to satisfy FK before creating `Attempt`
 
 ---
 
@@ -193,13 +194,13 @@ Execution rules
   - [x] Add session controls to client
     - [x] Default session length selector (e.g., 10); options: 5/10/20
     - [x] Track `plannedQuestions`, `completed`, `correct`
-    - [x] End-of-session summary: score, accuracy, average latency, quick retry button
+    - [x] End-of-session summary: score, accuracy, quick retry button
   - [x] Progress UI
     - [x] Use existing `components/ui/progress.tsx` to show completion percent
     - [x] Show `Q x / y` and remaining count in the panel
   - [x] Disable indefinite loop: stop auto-advancing when `completed === plannedQuestions`
   - [x] Do not increment `completed` on wrong answers for the same prompt
-  - [x] Add "Give up · Show answer" control to reveal and skip to next prompt
+  - [x] Add "Reveal answer" control to reveal and skip to next prompt
   - [ ] Optional persistence (see Section "Practice Sessions" below)
 - [x] Verified: first sound <3s after gesture; no overlap; proper feedback ✅ **WORKING**
 
@@ -250,16 +251,16 @@ Execution rules
 ---
 
 ### 14) Stats API + Dashboard Widgets
-- [ ] `app/api/stats/route.ts` (GET)
-  - [ ] Auth guard
-  - [ ] Return `{ totals, intervalHeat, chordHeat, last7, sessions }`
-    - [ ] `totals`: `{ totalAttempts, correctAttempts, accuracy, streakDays }`
+- [x] `app/api/stats/route.ts` (GET)
+  - [x] Auth guard
+  - [x] Return `{ totals, intervalHeat, chordHeat, last7, sessions }`
+    - [x] `totals`: `{ totalAttempts, correctAttempts, accuracy, streakDays }`
     - [ ] `sessions`: `{ totalSessions, last7Sessions? }` (if PracticeSession enabled; else derive coarse estimate or omit)
-    - [ ] `intervalHeat`: flattened keys `${interval}-${direction}`; also return a top misses list: `topMissedIntervals`
-  - [ ] Compute `last7` with day buckets from `Attempt`
+    - [x] `intervalHeat`: flattened keys `${interval}-${direction}`; also return a top misses list: `topMissedIntervals`
+  - [x] Compute `last7` with day buckets from `Attempt`
 - [ ] `components/StatsSummary.tsx` (accuracy %, streak, last 7 days)
   - [ ] Tiny report: "Where you struggle" (top 3 by miss rate) for intervals (by interval+direction)
-  - [ ] Wire `/dashboard/page.tsx` to API and render widgets
+  - [x] Wire `/dashboard/page.tsx` to API and render widgets
 
 ---
 
