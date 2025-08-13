@@ -17,6 +17,8 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   const startedAtRef = useRef<number | null>(null);
 
   // Sessionized UX state
+  type Phase = "IDLE" | "RUNNING" | "REVIEW";
+  const [phase, setPhase] = useState<Phase>("IDLE");
   const [plannedQuestions, setPlannedQuestions] = useState<number>(10);
   const [completed, setCompleted] = useState<number>(0);
   const [correctCount, setCorrectCount] = useState<number>(0);
@@ -33,10 +35,12 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     setCorrectCount(0);
     setFeedback(null);
     startedAtRef.current = null;
+    setPending(null);
+    setPhase("IDLE");
   };
 
   const startPractice = async () => {
-    if (sessionDone) {
+    if (sessionDone || phase === "REVIEW") {
       resetSession();
     }
     if (!audioReady) {
@@ -51,6 +55,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       }
       setAudioLoading(false);
     }
+    setPhase("RUNNING");
     nextPrompt();
   };
 
@@ -73,7 +78,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   };
 
   const onAnswer = async (label: string) => {
-    if (!pending || isPlaying || sessionDone) return;
+    if (!pending || isPlaying || phase !== "RUNNING") return;
     const correct = isCorrectInterval(pending, label as IntervalLabel);
     setFeedback(correct ? "✅ Correct!" : "❌ Try again");
 
@@ -102,14 +107,18 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     setTimeout(() => {
       setFeedback(null);
       // Only advance if correct and session not yet complete
-      if (correct && completed + 1 < plannedQuestions) {
+      const nextCount = correct ? completed + 1 : completed;
+      if (correct && nextCount < plannedQuestions) {
         nextPrompt();
+      } else if (correct && nextCount >= plannedQuestions) {
+        setPhase("REVIEW");
+        setPending(null);
       }
     }, 1200);
   };
 
   const giveUp = async () => {
-    if (!pending || isPlaying || sessionDone) return;
+    if (!pending || isPlaying || phase !== "RUNNING") return;
     const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
 
     try {
@@ -134,8 +143,12 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     setFeedback(`Answer: ${correctLabel}`);
     setTimeout(() => {
       setFeedback(null);
-      if (completed + 1 < plannedQuestions) {
+      const nextCount = completed + 1;
+      if (nextCount < plannedQuestions) {
         nextPrompt();
+      } else {
+        setPhase("REVIEW");
+        setPending(null);
       }
     }, 1400);
   };
@@ -171,18 +184,18 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       isPlaying={isPlaying}
       isLoading={audioLoading}
       feedback={feedback}
-      hasStarted={!!pending && !sessionDone}
-      currentInfo={pending ? `${pending.direction === "asc" ? "Ascending" : pending.direction === "desc" ? "Descending" : "Harmonic"} interval in ${pending.key} major` : undefined}
+      hasStarted={phase === "RUNNING"}
+      currentInfo={phase === "RUNNING" && pending ? `${pending.direction === "asc" ? "Ascending" : pending.direction === "desc" ? "Descending" : "Harmonic"} interval in ${pending.key} major` : undefined}
     >
-      {/* Session controls and progress */}
-      <div className="space-y-4 mb-2">
-        <div className="flex items-center justify-between gap-4">
+      {/* Idle: settings only */}
+      {phase === "IDLE" && (
+        <div className="space-y-4 mb-2">
           <div className="flex items-center gap-3">
             <span className="text-sm text-[color:var(--brand-muted)]">Session length</span>
             <Select
               value={String(plannedQuestions)}
               onValueChange={(v) => setPlannedQuestions(Number(v))}
-              disabled={!!pending && !sessionDone}
+              disabled={phase !== "IDLE"}
             >
               <SelectTrigger className="w-[120px]">
                 <SelectValue placeholder="Select" />
@@ -194,22 +207,32 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
               </SelectContent>
             </Select>
           </div>
-          <div className="text-sm text-[color:var(--brand-muted)]">
-            {completed} / {plannedQuestions}
-          </div>
         </div>
-        <Progress value={plannedQuestions ? Math.min(100, Math.round((completed / plannedQuestions) * 100)) : 0} />
-      </div>
+      )}
+
+      {/* Running: progress and prompt controls */}
+      {phase === "RUNNING" && (
+        <div className="space-y-4 mb-2">
+          <div className="flex items-center justify-between gap-4">
+            <div className="text-sm text-[color:var(--brand-muted)]">
+              {completed} / {plannedQuestions}
+            </div>
+          </div>
+          <Progress value={plannedQuestions ? Math.min(100, Math.round((completed / plannedQuestions) * 100)) : 0} />
+        </div>
+      )}
 
       {/* Prompt controls */}
-      <div className="flex items-center justify-end mb-2">
-        <Button variant="secondary" disabled={!pending || isPlaying || sessionDone} onClick={giveUp}>
-          Reveal answer
-        </Button>
-      </div>
+      {phase === "RUNNING" && (
+        <div className="flex items-center justify-end mb-2">
+          <Button variant="secondary" disabled={!pending || isPlaying || phase !== "RUNNING"} onClick={giveUp}>
+            Reveal answer
+          </Button>
+        </div>
+      )}
 
       {/* End-of-session summary */}
-      {sessionDone && (
+      {phase === "REVIEW" && (
         <div className="rounded-lg border border-[color:var(--brand-line)] p-4 bg-[color:var(--brand-panel)] mb-2">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm">Session complete</div>
@@ -219,19 +242,21 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         </div>
       )}
 
-      <div className="grid grid-cols-4 gap-3">
-        {INTERVAL_CHOICES.map((opt) => (
-          <Button
-            key={opt.value}
-            variant="brand"
-            disabled={!pending || isPlaying || sessionDone}
-            className="aspect-square text-lg font-semibold hover:scale-105 transition-transform"
-            onClick={() => onAnswer(opt.label)}
-          >
-            {opt.label}
-          </Button>
-        ))}
-      </div>
+      {phase === "RUNNING" && (
+        <div className="grid grid-cols-4 gap-3">
+          {INTERVAL_CHOICES.map((opt) => (
+            <Button
+              key={opt.value}
+              variant="brand"
+              disabled={!pending || isPlaying || phase !== "RUNNING"}
+              className="aspect-square text-lg font-semibold hover:scale-105 transition-transform"
+              onClick={() => onAnswer(opt.label)}
+            >
+              {opt.label}
+            </Button>
+          ))}
+        </div>
+      )}
     </PracticeInterface>
   );
 }
