@@ -10,12 +10,15 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
 
 export default function IntervalsPracticeClient({ drillId }: { drillId: string }) {
   const [audioReady, setAudioReady] = useState(false);
   const [audioLoading, setAudioLoading] = useState(false);
   const [pending, setPending] = useState<IntervalPrompt | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<IntervalLabel | null>(null);
+  const [revealedAnswer, setRevealedAnswer] = useState<IntervalLabel | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const startedAtRef = useRef<number | null>(null);
 
@@ -85,6 +88,8 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     setCompleted(0);
     setCorrectCount(0);
     setFeedback(null);
+    setSelectedAnswer(null);
+    setRevealedAnswer(null);
     startedAtRef.current = null;
     setPending(null);
     setPhase("IDLE");
@@ -113,6 +118,11 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   };
 
   const nextPrompt = async () => {
+    // Reset feedback states
+    setSelectedAnswer(null);
+    setRevealedAnswer(null);
+    setFeedback(null);
+    
     const p = buildIntervalPrompt({
       keyMode,
       fixedKey,
@@ -136,8 +146,11 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
 
   const onAnswer = async (label: string) => {
     if (!pending || isPlaying || phase !== "RUNNING") return;
-    const correct = isCorrectInterval(pending, label as IntervalLabel);
-    setFeedback(correct ? "✅ Correct!" : "❌ Try again");
+    const intervalLabel = label as IntervalLabel;
+    const correct = isCorrectInterval(pending, intervalLabel);
+    
+    setSelectedAnswer(intervalLabel);
+    setFeedback(correct ? "✅ Correct! Well done!" : "❌ Not quite right");
 
     // POST attempt
     try {
@@ -169,6 +182,8 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
 
     setTimeout(() => {
       setFeedback(null);
+      setSelectedAnswer(null);
+      setRevealedAnswer(null);
       // Only advance if correct and session not yet complete
       const nextCount = correct ? completed + 1 : completed;
       if (correct && nextCount < plannedQuestions) {
@@ -177,7 +192,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         setPhase("REVIEW");
         setPending(null);
       }
-    }, 1200);
+    }, 1500);
   };
 
   const giveUp = async () => {
@@ -208,10 +223,12 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       return { ...prev, [revealedLabel]: { seen: entry.seen + 1, correct: entry.correct } };
     });
 
-    const correctLabel = INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval;
-    setFeedback(`Answer: ${correctLabel}`);
+    const correctLabel = (INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval) as IntervalLabel;
+    setRevealedAnswer(correctLabel);
+    setFeedback(`💡 Answer: ${displayLabel(correctLabel)}`);
     setTimeout(() => {
       setFeedback(null);
+      setRevealedAnswer(null);
       const nextCount = completed + 1;
       if (nextCount < plannedQuestions) {
         nextPrompt();
@@ -219,7 +236,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         setPhase("REVIEW");
         setPending(null);
       }
-    }, 1400);
+    }, 2000);
   };
 
   const replayAudio = async () => {
@@ -331,109 +348,196 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     >
       {/* Idle: settings only */}
       {phase === "IDLE" && (
-        <div className="space-y-4 mb-2">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-[color:var(--brand-muted)]">Ready? Adjust settings, then start.</div>
-            <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <div className="text-center space-y-6 max-w-md mx-auto">
+            <div className="space-y-3">
+              <div className="flex items-center justify-center gap-3 text-xl font-bold text-[color:var(--brand-text)]">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+                Ready to practice intervals?
+              </div>
+              <div className="text-sm text-[color:var(--brand-muted)] leading-relaxed">Challenge yourself to identify melodic intervals in musical context. Each session adapts to your skill level.</div>
+            </div>
+            
+            <div className="flex justify-center">
+              <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
               <DialogTrigger asChild>
-                <Button variant="secondary">Settings</Button>
+                <Button variant="outline" size="default" className="px-6 flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                  </svg>
+                  Customize practice
+                </Button>
               </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Practice settings</DialogTitle>
+              <DialogContent className="max-w-lg">
+                <DialogHeader className="text-center pb-2">
+                  <DialogTitle className="text-2xl font-bold text-[color:var(--brand-text)] flex items-center justify-center gap-3">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                    </svg>
+                    Practice Settings
+                  </DialogTitle>
                 </DialogHeader>
-                <div className="space-y-6">
+                <div className="space-y-6 py-2">
                   {/* Session length */}
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium">Session length</div>
-                    <Select
-                      value={String(plannedQuestions)}
-                      onValueChange={(v) => setPlannedQuestions(Number(v))}
-                    >
-                      <SelectTrigger className="w-[160px]">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="5">5</SelectItem>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="20">20</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="space-y-3">
+                    <label className="text-base font-semibold text-[color:var(--brand-text)] flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                      </svg>
+                      Session Length
+                    </label>
+                    <div className="flex gap-2">
+                      {[5, 10, 20].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() => setPlannedQuestions(num)}
+                          className={cn(
+                            "flex-1 py-3 px-4 rounded-lg border-2 font-semibold transition-all",
+                            "hover:scale-105 active:scale-95",
+                            plannedQuestions === num
+                              ? "border-[color:var(--brand-accent)] bg-[color:var(--brand-accent)]/10 text-[color:var(--brand-accent)]"
+                              : "border-gray-200 dark:border-gray-700 text-[color:var(--brand-muted)] hover:border-[color:var(--brand-accent)]/50"
+                          )}
+                        >
+                          {num} questions
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Directions */}
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium">Directions</div>
-                    <ToggleGroup
-                      type="multiple"
-                      value={directions}
-                      onValueChange={(vals) =>
-                        setDirections(
-                          (vals as string[]).filter((d): d is IntervalDirection =>
-                            (DIRECTIONS as readonly string[]).includes(d)
-                          )
-                        )
-                      }
-                      variant="outline"
-                      size="sm"
-                    >
-                      {Array.from(DIRECTIONS).map((d) => (
-                        <ToggleGroupItem key={d} value={d} aria-label={d}>
-                          {d === "asc" ? "Ascending" : d === "desc" ? "Descending" : "Harmonic"}
-                        </ToggleGroupItem>
-                      ))}
-                    </ToggleGroup>
+                  <div className="space-y-3">
+                    <label className="text-base font-semibold text-[color:var(--brand-text)] flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14l-6-6zm0-2l6-6-1.41-1.41L12 3.17 7.41-.42 6 1l6 6z"/>
+                      </svg>
+                      Direction Types
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {Array.from(DIRECTIONS).map((d) => {
+                        const isSelected = directions.includes(d);
+                        const label = d === "asc" ? "Ascending" : d === "desc" ? "Descending" : "Harmonic";
+                        const icon = d === "asc" ? 
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg> :
+                          d === "desc" ? 
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg> :
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>;
+                        return (
+                          <button
+                            key={d}
+                            onClick={() => {
+                              if (isSelected) {
+                                if (directions.length > 1) {
+                                  setDirections(directions.filter(dir => dir !== d));
+                                }
+                              } else {
+                                setDirections([...directions, d]);
+                              }
+                            }}
+                            className={cn(
+                              "py-3 px-3 rounded-lg border-2 font-medium text-sm transition-all",
+                              "hover:scale-105 active:scale-95",
+                              isSelected
+                                ? "border-[color:var(--brand-accent)] bg-[color:var(--brand-accent)]/10 text-[color:var(--brand-accent)]"
+                                : "border-gray-200 dark:border-gray-700 text-[color:var(--brand-muted)] hover:border-[color:var(--brand-accent)]/50"
+                            )}
+                          >
+                            <div className="flex items-center gap-2">
+                              {icon}
+                              {label}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Key mode */}
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium">Key</div>
-                    <ToggleGroup
-                      type="single"
-                      value={keyMode}
-                      onValueChange={(v) => setKeyMode(v === "fixed" ? "fixed" : "random")}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <ToggleGroupItem value="random">Random</ToggleGroupItem>
-                      <ToggleGroupItem value="fixed">Fixed</ToggleGroupItem>
-                    </ToggleGroup>
+                  <div className="space-y-3">
+                    <label className="text-base font-semibold text-[color:var(--brand-text)] flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                      </svg>
+                      Key Selection
+                    </label>
+                    <div className="flex gap-2 mb-3">
+                      {["random", "fixed"].map((mode) => (
+                        <button
+                          key={mode}
+                          onClick={() => setKeyMode(mode as "random" | "fixed")}
+                          className={cn(
+                            "flex-1 py-3 px-4 rounded-lg border-2 font-semibold transition-all capitalize",
+                            "hover:scale-105 active:scale-95",
+                            keyMode === mode
+                              ? "border-[color:var(--brand-accent)] bg-[color:var(--brand-accent)]/10 text-[color:var(--brand-accent)]"
+                              : "border-gray-200 dark:border-gray-700 text-[color:var(--brand-muted)] hover:border-[color:var(--brand-accent)]/50"
+                          )}
+                        >
+                          {mode}
+                        </button>
+                      ))}
+                    </div>
                     {keyMode === "fixed" && (
-                      <Select value={fixedKey} onValueChange={setFixedKey}>
-                        <SelectTrigger className="w-[160px] mt-2">
-                          <SelectValue placeholder="Key" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from(KEYS).map((k) => (
-                            <SelectItem key={k} value={k}>{k}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="grid grid-cols-6 gap-2">
+                        {Array.from(KEYS).map((k) => (
+                          <button
+                            key={k}
+                            onClick={() => setFixedKey(k)}
+                            className={cn(
+                              "py-2 px-3 rounded-lg border-2 font-semibold transition-all",
+                              "hover:scale-105 active:scale-95",
+                              fixedKey === k
+                                ? "border-[color:var(--brand-accent)] bg-[color:var(--brand-accent)]/10 text-[color:var(--brand-accent)]"
+                                : "border-gray-200 dark:border-gray-700 text-[color:var(--brand-muted)] hover:border-[color:var(--brand-accent)]/50"
+                            )}
+                          >
+                            {k}
+                          </button>
+                        ))}
+                      </div>
                     )}
                   </div>
                 </div>
               </DialogContent>
             </Dialog>
-          </div>
+            </div>
         </div>
       )}
 
       {/* Running: progress and prompt controls */}
       {phase === "RUNNING" && (
-        <div className="space-y-2 mb-2">
-          <div className="text-sm font-medium text-[color:var(--brand-muted)]">
-            Question {currentQuestionNumber} of {plannedQuestions}
+        <div className="space-y-2 mb-3">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-semibold text-[color:var(--brand-text)]">
+              Question {currentQuestionNumber} of {plannedQuestions}
+            </div>
+            <div className="text-sm text-[color:var(--brand-muted)]">
+              {Math.round((completed / plannedQuestions) * 100)}% complete
+            </div>
           </div>
-          <Progress value={plannedQuestions ? Math.min(100, Math.round((completed / plannedQuestions) * 100)) : 0} />
+          <Progress value={plannedQuestions ? Math.min(100, Math.round((completed / plannedQuestions) * 100)) : 0} className="h-2" />
         </div>
       )}
 
       {/* Mode pill */}
       {phase === "RUNNING" && pending && (
-        <div className="flex justify-center mb-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[color:var(--brand-line)] text-xs text-[color:var(--brand-muted)]">
-            <span>{pending.direction === "asc" ? "Ascending" : pending.direction === "desc" ? "Descending" : "Harmonic"}</span>
-            <span>•</span>
+        <div className="flex justify-center mb-3">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[color:var(--brand-panel)] border border-[color:var(--brand-line)] text-sm font-medium text-[color:var(--brand-text)] shadow-sm">
+            <span className={cn(
+              "inline-flex items-center gap-2",
+              pending.direction === "asc" && "text-emerald-600 dark:text-emerald-400",
+              pending.direction === "desc" && "text-blue-600 dark:text-blue-400",
+              pending.direction === "harm" && "text-purple-600 dark:text-purple-400"
+            )}>
+              {pending.direction === "asc" ? 
+                <><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg> Ascending</> :
+                pending.direction === "desc" ? 
+                <><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg> Descending</> :
+                <><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg> Harmonic</>
+              }
+            </span>
+            <span className="text-[color:var(--brand-muted)]">•</span>
             <span>Key: {pending.key} major</span>
           </div>
         </div>
@@ -441,74 +545,161 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
 
       {/* Play panel */}
       {phase === "RUNNING" && (
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <Button variant="secondary" disabled={!pending || isPlaying} onClick={playContextOnly}>Play Context</Button>
-          <Button variant="secondary" disabled={!pending || isPlaying} onClick={playQuestionOnly}>Play Question</Button>
-          <Button variant="secondary" disabled={!pending || isPlaying} onClick={replayAudio}>Replay</Button>
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <Button variant="outline" size="sm" disabled={!pending || isPlaying} onClick={playContextOnly} className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+            Context
+          </Button>
+          <Button variant="outline" size="sm" disabled={!pending || isPlaying} onClick={playQuestionOnly} className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+            </svg>
+            Question
+          </Button>
+          <Button variant="outline" size="sm" disabled={!pending || isPlaying} onClick={replayAudio} className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+            </svg>
+            Replay
+          </Button>
         </div>
       )}
 
       {/* Helper actions */}
       {phase === "RUNNING" && (
-        <div className="flex items-center justify-end mb-2 gap-2">
+        <div className="flex items-center justify-end mb-3 gap-2">
           <Button variant="ghost" size="sm" disabled={!pending || isPlaying} onClick={skip}>Skip</Button>
           <Button variant="secondary" size="sm" disabled={!pending || isPlaying} onClick={giveUp}>Reveal answer</Button>
         </div>
       )}
 
-      {/* End-of-session summary */
-      }
+      {/* End-of-session summary */}
       {phase === "REVIEW" && (
-        <div className="rounded-lg border border-[color:var(--brand-line)] p-4 bg-[color:var(--brand-panel)] mb-2">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="text-sm font-medium">Session complete</div>
-            <div className="text-sm">Score: {correctCount} / {plannedQuestions} ({accuracy}%)</div>
-            <div className="text-sm">Average time: {averageSeconds.toFixed(1)} s</div>
+        <div className="flex-1 flex flex-col">
+          <div className="text-center mb-4">
+            <div className="flex items-center justify-center gap-3 text-2xl font-bold text-[color:var(--brand-text)] mb-2">
+              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              Session Complete!
+            </div>
+            <div className="text-lg text-[color:var(--brand-muted)]">
+              Great work on your interval training
+            </div>
           </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/30 border border-blue-200 dark:border-blue-800">
+              <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{correctCount}/{plannedQuestions}</div>
+              <div className="text-sm text-blue-600 dark:text-blue-400">Correct</div>
+            </div>
+            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/30 border border-emerald-200 dark:border-emerald-800">
+              <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{accuracy}%</div>
+              <div className="text-sm text-emerald-600 dark:text-emerald-400">Accuracy</div>
+            </div>
+            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/30 border border-amber-200 dark:border-amber-800">
+              <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">{averageSeconds.toFixed(1)}s</div>
+              <div className="text-sm text-amber-600 dark:text-amber-400">Avg Time</div>
+            </div>
+          </div>
+
           {sessionAccuracyList.length > 0 && (
-            <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {sessionAccuracyList.map(([lab, v]) => {
-                const pct = v.seen > 0 ? Math.round((v.correct / v.seen) * 100) : 0;
-                return (
-                  <div key={lab} className="flex items-center justify-between px-3 py-2 rounded border border-[color:var(--brand-line)] text-sm">
-                    <span>{displayLabel(lab)}</span>
-                    <span className="text-[color:var(--brand-muted)]">{pct}%</span>
-                  </div>
-                );
-              })}
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-[color:var(--brand-text)] mb-3">Interval Breakdown</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {sessionAccuracyList.map(([lab, v]) => {
+                  const pct = v.seen > 0 ? Math.round((v.correct / v.seen) * 100) : 0;
+                  return (
+                    <div key={lab} className={cn(
+                      "flex items-center justify-between px-3 py-2 rounded-lg border text-sm",
+                      pct >= 80 ? "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/10" :
+                      pct >= 60 ? "border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/10" :
+                      "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10"
+                    )}>
+                      <span className="font-medium">{displayLabel(lab)}</span>
+                      <span className={cn(
+                        "font-semibold",
+                        pct >= 80 ? "text-green-700 dark:text-green-300" :
+                        pct >= 60 ? "text-yellow-700 dark:text-yellow-300" :
+                        "text-red-700 dark:text-red-300"
+                      )}>{pct}%</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
-          <div className="mt-4 flex items-center justify-end gap-2">
-            <Button variant="secondary" onClick={() => { setPhase("IDLE"); setSettingsOpen(true); }}>Adjust settings</Button>
-            <Button variant="brand" onClick={startPractice}>Restart</Button>
+          
+          <div className="mt-auto flex items-center justify-center gap-3">
+            <Button variant="outline" onClick={() => { setPhase("IDLE"); setSettingsOpen(true); }} className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+              </svg>
+              Adjust settings
+            </Button>
+            <Button variant="brandPrimary" size="lg" onClick={startPractice} className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+              </svg>
+              Practice again
+            </Button>
           </div>
         </div>
       )}
 
       {phase === "RUNNING" && (
-        <div className="space-y-4">
+        <div className="flex-1 flex flex-col space-y-3">
           {GROUPS.map((group) => (
             <div key={group.name} className="space-y-2">
-              <div className="text-xs uppercase tracking-wide text-[color:var(--brand-muted)]">{group.name}</div>
-              <div className="grid grid-cols-4 gap-3">
+              <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-muted)] px-1">{group.name}</div>
+              <div className={cn(
+                "grid gap-2",
+                group.items.length === 1 ? "grid-cols-1 max-w-[120px] mx-auto" :
+                group.items.length === 2 ? "grid-cols-2" :
+                "grid-cols-3"
+              )}>
                 {group.items.map((label) => {
                   const keyHint = KEY_BINDINGS[LABEL_ORDER.indexOf(label)];
+                  const isSelected = selectedAnswer === label;
+                  const isRevealed = revealedAnswer === label;
+                  const isCorrect = pending && isCorrectInterval(pending, label);
+                  
                   return (
                     <Button
                       key={label}
                       variant="brand"
-                      disabled={!pending || isPlaying}
-                      className="aspect-square text-base font-semibold hover:scale-105 transition-transform relative"
+                      size="lg"
+                      disabled={!pending || isPlaying || selectedAnswer !== null}
+                      className={cn(
+                        "min-h-[52px] text-base font-semibold hover:scale-[1.02] active:scale-[0.98]",
+                        "transition-all duration-300 relative",
+                        "border-2",
+                        group.items.length === 1 && "aspect-square",
+                        // Visual feedback states
+                        isSelected && isCorrect && "border-green-500 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 animate-pulse",
+                        isSelected && !isCorrect && "border-red-500 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200",
+                        isRevealed && "border-blue-500 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 ring-2 ring-blue-300",
+                        !isSelected && !isRevealed && "border-transparent hover:border-[color:var(--brand-accent)]"
+                      )}
                       onClick={() => onAnswer(label)}
                       aria-keyshortcuts={keyHint}
                       title={keyHint ? `Shortcut: ${keyHint.toUpperCase()}` : undefined}
                     >
-                      {displayLabel(label)}
-                      {keyHint && (
-                        <span className="absolute bottom-1 right-1 text-[10px] px-1 py-0.5 rounded border border-[color:var(--brand-line)] text-[color:var(--brand-muted)]">
-                          {keyHint.toUpperCase()}
+                      <span className="flex flex-col items-center justify-center">
+                        <span className="leading-tight flex items-center gap-1">
+                          {displayLabel(label)}
+                          {isSelected && isCorrect && <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>}
+                          {isSelected && !isCorrect && <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>}
+                          {isRevealed && <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
                         </span>
-                      )}
+                        {keyHint && (
+                          <span className="text-xs mt-1 px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10">
+                            {keyHint.toUpperCase()}
+                          </span>
+                        )}
+                      </span>
                     </Button>
                   );
                 })}

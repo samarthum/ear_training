@@ -31,68 +31,72 @@ export function PracticeInterface({
   className
 }: PracticeInterfaceProps) {
   return (
-    <div className={cn("space-y-6", className)}>
-      {/* Header */}
-      <div className="text-center space-y-3">
-        <h1 className="text-3xl font-bold text-[color:var(--brand-text)] tracking-tight">
+    <div className={cn("h-screen flex flex-col overflow-hidden", className)}>
+      {/* Header - Minimal */}
+      <div className="text-center py-2 border-b border-[color:var(--brand-line)]">
+        <h1 className="text-lg font-bold text-[color:var(--brand-text)]">
           {title}
         </h1>
         {description && (
-          <p className="text-[color:var(--brand-muted)] max-w-2xl mx-auto">
+          <p className="text-xs text-[color:var(--brand-muted)] mt-1">
             {description}
           </p>
         )}
       </div>
 
-      {/* Practice Panel */}
-      <div className="max-w-2xl mx-auto">
+      {/* Practice Panel - Auto-sized container at top */}
+      <div className="flex-1 flex flex-col items-center p-4 min-h-0">
         <div 
           className={cn(
-            "rounded-xl p-6 border border-[color:var(--brand-line)]",
+            "rounded-lg border border-[color:var(--brand-line)] p-6 max-w-2xl w-full",
             "bg-[color:var(--brand-panel)] backdrop-blur-sm",
-            "shadow-[var(--brand-shadow)]",
+            "shadow-[var(--brand-shadow)] flex flex-col",
           )}
         >
-          {/* Audio Controls */}
-          <div className="text-center space-y-4 mb-6">
-            <Button
-              onClick={hasStarted ? onReplay : onStart}
-              disabled={isPlaying || isLoading}
-              variant="brandPrimary"
-              size="lg"
-              shape="pill"
-              className="min-w-[160px]"
-            >
-              {isLoading
-                ? "Loading..."
-                : isPlaying
-                ? "Playing..."
-                : hasStarted
-                ? "Replay"
-                : "Start session"}
-            </Button>
+          {/* Audio Controls - Compact */}
+          {!hasStarted && (
+            <div className="text-center mb-4">
+              <Button
+                onClick={onStart}
+                disabled={isPlaying || isLoading}
+                variant="brandPrimary"
+                size="lg"
+                shape="pill"
+                className="min-w-[140px] h-10"
+              >
+                {isLoading
+                  ? "Loading..."
+                  : isPlaying
+                  ? "Playing..."
+                  : "Start session"}
+              </Button>
+            </div>
+          )}
             
-            {feedback && (
+          {feedback && (
+            <div className="text-center mb-4">
               <div role="status" aria-live="polite" className={cn(
-                "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium",
+                "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium animate-in slide-in-from-top duration-300",
                 feedback.startsWith("✅") 
                   ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300"
-                  : "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300"
+                  : feedback.startsWith("❌")
+                  ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300"
+                  : "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
               )}>
                 {feedback}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Practice Content */}
-          <div className="space-y-6">
+          <div className="flex flex-col space-y-4">
             {children}
           </div>
 
-          {/* Current Info */}
+          {/* Current Info - Compact */}
           {currentInfo && (
-            <div className="mt-6 pt-4 border-t border-[color:var(--brand-line)]">
-              <p className="text-sm text-[color:var(--brand-muted)] text-center">
+            <div className="mt-2 pt-2 border-t border-[color:var(--brand-line)]">
+              <p className="text-xs text-[color:var(--brand-muted)] text-center">
                 {currentInfo}
               </p>
             </div>
