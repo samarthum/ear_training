@@ -3,10 +3,13 @@ import { redirect } from "next/navigation";
 import { AppLayout } from "@/components/app/AppLayout";
 import { PracticeCard } from "@/components/app/PracticeCard";
 import { StatsCard } from "@/components/app/StatsCard";
+import { getUserStats } from "@/lib/stats";
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/sign-in");
+
+  const stats = await getUserStats(session.user.id as string);
 
   return (
     <AppLayout>
@@ -24,21 +27,21 @@ export default async function DashboardPage() {
         {/* Stats overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatsCard 
-            title="Total Sessions"
-            value="0"
-            subtitle="Start practicing to see stats"
+            title="Total Attempts"
+            value={stats.totals.totalAttempts}
+            subtitle="All-time across drills"
             icon="🎯"
           />
           <StatsCard 
             title="Accuracy"
-            value="--"
-            subtitle="Complete sessions to track progress"
+            value={`${stats.totals.accuracy}%`}
+            subtitle={`${stats.totals.correctAttempts} correct`}
             icon="📈"
           />
           <StatsCard 
             title="Current Streak" 
-            value="0 days"
-            subtitle="Begin your practice streak"
+            value={`${stats.totals.streakDays} day${stats.totals.streakDays === 1 ? '' : 's'}`}
+            subtitle="Based on daily activity"
             icon="🔥"
           />
         </div>

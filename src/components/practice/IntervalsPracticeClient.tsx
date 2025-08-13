@@ -20,7 +20,6 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   const [plannedQuestions, setPlannedQuestions] = useState<number>(10);
   const [completed, setCompleted] = useState<number>(0);
   const [correctCount, setCorrectCount] = useState<number>(0);
-  const [totalLatencyMs, setTotalLatencyMs] = useState<number>(0);
   const sessionDone = plannedQuestions > 0 && completed >= plannedQuestions;
 
   useEffect(() => {
@@ -32,7 +31,6 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   const resetSession = () => {
     setCompleted(0);
     setCorrectCount(0);
-    setTotalLatencyMs(0);
     setFeedback(null);
     startedAtRef.current = null;
   };
@@ -85,7 +83,6 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       if (correct) {
         setCorrectCount((c) => c + 1);
         setCompleted((n) => n + 1);
-        setTotalLatencyMs((t) => t + latencyMs);
       }
       await fetch("/api/attempts", {
         method: "POST",
@@ -132,10 +129,9 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     }
 
     setCompleted((n) => n + 1);
-    setTotalLatencyMs((t) => t + latencyMs);
 
     const correctLabel = INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval;
-    setFeedback(`⏭️ Skipped. Answer: ${correctLabel}`);
+    setFeedback(`Answer: ${correctLabel}`);
     setTimeout(() => {
       setFeedback(null);
       if (completed + 1 < plannedQuestions) {
@@ -165,7 +161,6 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   };
 
   const accuracy = completed > 0 ? Math.round((correctCount / completed) * 100) : 0;
-  const avgLatency = completed > 0 ? Math.round(totalLatencyMs / completed) : 0;
 
   return (
     <PracticeInterface
@@ -209,7 +204,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       {/* Prompt controls */}
       <div className="flex items-center justify-end mb-2">
         <Button variant="secondary" disabled={!pending || isPlaying || sessionDone} onClick={giveUp}>
-          Give up · Show answer
+          Reveal answer
         </Button>
       </div>
 
@@ -219,7 +214,6 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm">Session complete</div>
             <div className="text-sm">Score: {correctCount} / {plannedQuestions} ({accuracy}%)</div>
-            <div className="text-sm">Avg latency: {avgLatency} ms</div>
             <Button variant="brand" onClick={startPractice}>Start new session</Button>
           </div>
         </div>
