@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { ensureAudioReady, playContext, playInterval, cleanupAudio } from "@/lib/audio/transport";
 import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval, KEYS, DIRECTIONS, type IntervalLabel } from "@/lib/theory/intervals";
 import type { IntervalPrompt } from "@/types/drills";
+import type { IntervalDirection } from "@/types/drills";
 import { PracticeInterface } from "@/components/app/PracticeInterface";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -32,7 +33,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [keyMode, setKeyMode] = useState<"random" | "fixed">("random");
   const [fixedKey, setFixedKey] = useState<string>("C");
-  const [directions, setDirections] = useState<string[]>(["asc", "desc", "harm"]);
+  const [directions, setDirections] = useState<IntervalDirection[]>(["asc", "desc", "harm"]);
 
   // Keyboard shortcuts mapping (12 intervals)
   const LABEL_ORDER: IntervalLabel[] = ["m2","M2","m3","M3","P4","TT","P5","m6","M6","m7","M7","P8"];
@@ -69,12 +70,54 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       if (idx >= 0 && LABEL_ORDER[idx]) {
         e.preventDefault();
         const selected = LABEL_ORDER[idx];
-        onAnswer(selected);
+        // Call inline to avoid capturing stale function reference in deps
+        (async () => {
+          if (!pending || isPlaying || phase !== "RUNNING") return;
+          const correct = isCorrectInterval(pending, selected as IntervalLabel);
+          setFeedback(correct ? "✅ Correct!" : "❌ Try again");
+          try {
+            const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
+            if (correct) {
+              setCorrectCount((c) => c + 1);
+              setCompleted((n) => n + 1);
+              setTotalLatencyMs((t) => t + latencyMs);
+              const correctLabel = (INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval) as IntervalLabel;
+              setSessionStats((prev) => {
+                const entry = prev[correctLabel] || { seen: 0, correct: 0 };
+                return { ...prev, [correctLabel]: { seen: entry.seen + 1, correct: entry.correct + 1 } };
+              });
+            }
+            await fetch("/api/attempts", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                drillId,
+                prompt: pending,
+                answer: { selection: selected },
+                isCorrect: correct,
+                latencyMs,
+              }),
+            });
+          } catch (err) {
+            console.error("Failed to post attempt", err);
+          }
+
+          setTimeout(() => {
+            setFeedback(null);
+            const nextCount = correct ? completed + 1 : completed;
+            if (correct && nextCount < plannedQuestions) {
+              nextPrompt();
+            } else if (correct && nextCount >= plannedQuestions) {
+              setPhase("REVIEW");
+              setPending(null);
+            }
+          }, 1200);
+        })();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [phase, isPlaying, pending, completed, plannedQuestions]);
+  }, [phase, isPlaying, pending, completed, plannedQuestions, KEY_BINDINGS, LABEL_ORDER, drillId]);
 
   const resetSession = () => {
     setCompleted(0);
@@ -362,7 +405,13 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                     <ToggleGroup
                       type="multiple"
                       value={directions}
-                      onValueChange={(vals) => setDirections(vals)}
+                      onValueChange={(vals) =>
+                        setDirections(
+                          (vals as string[]).filter((d): d is IntervalDirection =>
+                            (DIRECTIONS as readonly string[]).includes(d)
+                          )
+                        )
+                      }
                       variant="outline"
                       size="sm"
                     >
@@ -380,7 +429,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                     <ToggleGroup
                       type="single"
                       value={keyMode}
-                      onValueChange={(v) => setKeyMode((v as any) || "random")}
+                      onValueChange={(v) => setKeyMode(v === "fixed" ? "fixed" : "random")}
                       variant="outline"
                       size="sm"
                     >
