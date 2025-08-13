@@ -1,0 +1,564 @@
+
+> ear-training@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.4.6
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.179.213:3000
+   - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 2.4s
+ ✓ Compiled /middleware in 323ms (255 modules)
+ ○ Compiling /sign-in ...
+ ✓ Compiled /sign-in in 1264ms (603 modules)
+ GET /sign-in 200 in 2134ms
+ ○ Compiling /api/otp/request ...
+ ✓ Compiled /api/otp/request in 1114ms (653 modules)
+ GET /sign-in 200 in 61ms
+prisma:query SELECT "public"."OtpCode"."id", "public"."OtpCode"."identifier", "public"."OtpCode"."codeHash", "public"."OtpCode"."expiresAt", "public"."OtpCode"."consumedAt", "public"."OtpCode"."attempts", "public"."OtpCode"."ip", "public"."OtpCode"."createdAt" FROM "public"."OtpCode" WHERE ("public"."OtpCode"."identifier" = $1 AND "public"."OtpCode"."consumedAt" IS NULL AND "public"."OtpCode"."expiresAt" > $2) LIMIT $3 OFFSET $4
+ POST /api/otp/request 200 in 1667ms
+ ○ Compiling /practice/intervals ...
+ ✓ Compiled /practice/intervals in 2.2s (2911 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 2781ms
+ ✓ Compiled in 646ms (1308 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 58ms
+ ✓ Compiled in 343ms (1308 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 92ms
+ ✓ Compiled in 340ms (1308 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 85ms
+ ✓ Compiled in 667ms (2925 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 159ms
+ ✓ Compiled in 500ms (2925 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 447ms
+ ✓ Compiled in 371ms (2925 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 89ms
+ ✓ Compiled in 351ms (2925 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 149ms
+ ✓ Compiled in 658ms (2925 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 177ms
+ ✓ Compiled in 303ms (2925 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 120ms
+ ✓ Compiled in 390ms (2925 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 84ms
+ ✓ Compiled in 319ms (2925 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 1321ms
+ ✓ Compiled in 441ms (2925 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 115ms
+ ✓ Compiled in 254ms (2925 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 432ms
+ ✓ Compiled in 415ms (2925 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 392ms
+ ✓ Compiled in 243ms (2925 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 271ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 213ms
+ ✓ Compiled in 372ms (2925 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 82ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 213ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 354ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1039ms (2916 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /_next/static/webpack/f9cbb142e4e0f52c.webpack.hot-update.json 404 in 676ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 119ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 325ms
+ ✓ Compiled in 418ms (2930 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 180ms
+ ✓ Compiled in 643ms (2925 modules)
+ ✓ Compiled in 262ms (2925 modules)
+ ✓ Compiled in 1131ms (2925 modules)
+ ✓ Compiled in 656ms (2925 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 666ms (2937 modules)
+ GET / 200 in 888ms
+ ✓ Compiled /dashboard in 356ms (2945 modules)
+prisma:query SELECT "public"."UserStat"."userId", "public"."UserStat"."totalAttempts", "public"."UserStat"."correctAttempts", "public"."UserStat"."streakDays", "public"."UserStat"."lastAttemptAt", "public"."UserStat"."intervalHeat", "public"."UserStat"."chordHeat" FROM "public"."UserStat" WHERE ("public"."UserStat"."userId" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Attempt"."id", "public"."Attempt"."createdAt", "public"."Attempt"."isCorrect" FROM "public"."Attempt" WHERE ("public"."Attempt"."userId" = $1 AND "public"."Attempt"."createdAt" >= $2) OFFSET $3
+ GET /dashboard 200 in 890ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 75ms
+ ✓ Compiled in 724ms (2952 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 129ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 377ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 140ms
+ ✓ Compiled in 1189ms (2952 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 183ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 398ms
+ ✓ Compiled in 439ms (2952 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 86ms
+ GET /practice/intervals 200 in 87ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 258ms
+ ⨯ ./src/components/practice/IntervalsPracticeClient.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/samarth/Desktop/Work/code/ear_training/src/components/practice/IntervalsPracticeClient.tsx[0m:440:1]
+ [2m437[0m |               </DialogContent>
+ [2m438[0m |             </Dialog>
+ [2m439[0m |           </div>
+ [2m440[0m |         </div>
+     : [35;1m         ^^^^^[0m
+ [2m441[0m |       )}
+ [2m442[0m | 
+ [2m443[0m |       {/* Running: progress and prompt controls */}
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/practice/IntervalsPracticeClient.tsx
+./src/app/practice/intervals/page.tsx
+ ○ Compiling /_error ...
+ ⨯ ./src/components/practice/IntervalsPracticeClient.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/samarth/Desktop/Work/code/ear_training/src/components/practice/IntervalsPracticeClient.tsx[0m:440:1]
+ [2m437[0m |               </DialogContent>
+ [2m438[0m |             </Dialog>
+ [2m439[0m |           </div>
+ [2m440[0m |         </div>
+     : [35;1m         ^^^^^[0m
+ [2m441[0m |       )}
+ [2m442[0m | 
+ [2m443[0m |       {/* Running: progress and prompt controls */}
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/practice/IntervalsPracticeClient.tsx
+./src/app/practice/intervals/page.tsx
+ GET /practice/intervals 500 in 2265ms
+ GET /practice/intervals 500 in 2265ms
+ GET /practice/intervals 500 in 34ms
+ GET /practice/intervals 500 in 35ms
+ GET /practice/intervals 500 in 41ms
+ GET /practice/intervals 500 in 41ms
+ GET /practice/intervals 500 in 11ms
+ GET /practice/intervals 500 in 15ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/samarth/Desktop/Work/code/ear_training/.next/cache/webpack/client-development-fallback/1.pack.gz_' -> '/Users/samarth/Desktop/Work/code/ear_training/.next/cache/webpack/client-development-fallback/1.pack.gz'
+ ✓ Compiled /_not-found in 2.1s (3271 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /_next/static/webpack/e5a51cd63fa26764.webpack.hot-update.json 404 in 2378ms
+ GET /_next/static/webpack/e5a51cd63fa26764.webpack.hot-update.json 404 in 2379ms
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 453ms
+ GET /practice/intervals 200 in 520ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 175ms
+ ✓ Compiled in 655ms (3285 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 782ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 1422ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 274ms
+ ✓ Compiled in 1004ms (3138 modules)
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 197ms
+ GET /practice/intervals 200 in 200ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 270ms
+ ✓ Compiled in 1670ms (3138 modules)
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 210ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 217ms
+ ✓ Compiled in 426ms (3138 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 228ms
+ GET /practice/intervals 200 in 229ms
+ ✓ Compiled in 472ms (3138 modules)
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 112ms
+ GET /practice/intervals 200 in 114ms
+ ✓ Compiled in 427ms (3138 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 201ms
+ GET /practice/intervals 200 in 201ms
+ ✓ Compiled in 436ms (3138 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 108ms
+ GET /practice/intervals 200 in 107ms
+ ✓ Compiled in 485ms (3138 modules)
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 108ms
+ GET /practice/intervals 200 in 108ms
+ ✓ Compiled in 298ms (3138 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 595ms
+ GET /practice/intervals 200 in 587ms
+ ✓ Compiled in 265ms (3138 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 737ms
+ GET /practice/intervals 200 in 737ms
+ ✓ Compiled in 658ms (3138 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 566ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 767ms
+ ✓ Compiled in 652ms (3138 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 86ms
+ GET /practice/intervals 200 in 86ms
+ ✓ Compiled in 684ms (3138 modules)
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 100ms
+ GET /practice/intervals 200 in 101ms
+ ✓ Compiled in 786ms (3138 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 97ms
+ GET /practice/intervals 200 in 98ms
+ ✓ Compiled in 646ms (3138 modules)
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 335ms
+ GET /practice/intervals 200 in 339ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 215ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 330ms
+ ⨯ ./src/components/practice/IntervalsPracticeClient.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4m/Users/samarth/Desktop/Work/code/ear_training/src/components/practice/IntervalsPracticeClient.tsx[0m:505:1]
+ [2m502[0m |               </DialogContent>
+ [2m503[0m |             </Dialog>
+ [2m504[0m |         </div>
+ [2m505[0m |       )}
+     : [35;1m       ^[0m
+ [2m506[0m | 
+ [2m507[0m |       {/* Running: progress and prompt controls */}
+ [2m508[0m |       {phase === "RUNNING" && (
+     `----
+  [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/samarth/Desktop/Work/code/ear_training/src/components/practice/IntervalsPracticeClient.tsx[0m:711:1]
+ [2m708[0m |         </div>
+ [2m709[0m |       )}
+ [2m710[0m |     </PracticeInterface>
+ [2m711[0m |   );
+     : [35;1m  ^[0m
+ [2m712[0m | }
+ [2m713[0m | 
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/practice/IntervalsPracticeClient.tsx
+./src/app/practice/intervals/page.tsx
+ ○ Compiling /_error ...
+ ⨯ ./src/components/practice/IntervalsPracticeClient.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4m/Users/samarth/Desktop/Work/code/ear_training/src/components/practice/IntervalsPracticeClient.tsx[0m:505:1]
+ [2m502[0m |               </DialogContent>
+ [2m503[0m |             </Dialog>
+ [2m504[0m |         </div>
+ [2m505[0m |       )}
+     : [35;1m       ^[0m
+ [2m506[0m | 
+ [2m507[0m |       {/* Running: progress and prompt controls */}
+ [2m508[0m |       {phase === "RUNNING" && (
+     `----
+  [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/samarth/Desktop/Work/code/ear_training/src/components/practice/IntervalsPracticeClient.tsx[0m:711:1]
+ [2m708[0m |         </div>
+ [2m709[0m |       )}
+ [2m710[0m |     </PracticeInterface>
+ [2m711[0m |   );
+     : [35;1m  ^[0m
+ [2m712[0m | }
+ [2m713[0m | 
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/practice/IntervalsPracticeClient.tsx
+./src/app/practice/intervals/page.tsx
+ GET /practice/intervals 500 in 1116ms
+ GET /practice/intervals 500 in 1113ms
+ GET /practice/intervals 500 in 15ms
+ GET /practice/intervals 500 in 36ms
+ ✓ Compiled /_not-found in 1367ms (3216 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /_next/static/webpack/e5a51cd63fa26764.webpack.hot-update.json 404 in 1577ms
+ GET /_next/static/webpack/e5a51cd63fa26764.webpack.hot-update.json 404 in 1586ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 274ms
+ GET /practice/intervals 200 in 334ms
+ ✓ Compiled in 515ms (3230 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT 1
+ GET /practice/intervals 200 in 885ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 1038ms
+ ✓ Compiled in 503ms (3230 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 390ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 398ms
+ ✓ Compiled in 340ms (3230 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 506ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 528ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 227ms
+ ✓ Compiled in 953ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 2925ms
+ GET /practice/intervals 200 in 2926ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 221ms
+ ○ Compiling /api/attempts ...
+ ✓ Compiled /api/attempts in 878ms (3143 modules)
+prisma:query BEGIN
+prisma:query SELECT "public"."UserStat"."userId", "public"."UserStat"."totalAttempts", "public"."UserStat"."correctAttempts", "public"."UserStat"."streakDays", "public"."UserStat"."lastAttemptAt", "public"."UserStat"."intervalHeat", "public"."UserStat"."chordHeat" FROM "public"."UserStat" WHERE ("public"."UserStat"."userId" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."emailVerified", "public"."User"."image", "public"."User"."createdAt" FROM "public"."User" WHERE ("public"."User"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."Attempt" ("id","userId","drillId","prompt","latencyMs","answer","isCorrect","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING "public"."Attempt"."id"
+prisma:query INSERT INTO "public"."UserStat" ("userId","totalAttempts","correctAttempts","streakDays","lastAttemptAt","intervalHeat") VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT ("userId") DO UPDATE SET "totalAttempts" = ("public"."UserStat"."totalAttempts" + $7), "correctAttempts" = ("public"."UserStat"."correctAttempts" + $8), "lastAttemptAt" = $9, "streakDays" = $10, "intervalHeat" = $11 WHERE ("public"."UserStat"."userId" = $12 AND 1=1) RETURNING "public"."UserStat"."userId", "public"."UserStat"."totalAttempts", "public"."UserStat"."correctAttempts", "public"."UserStat"."streakDays"
+prisma:query COMMIT
+ POST /api/attempts 200 in 1635ms
+prisma:query BEGIN
+prisma:query SELECT "public"."UserStat"."userId", "public"."UserStat"."totalAttempts", "public"."UserStat"."correctAttempts", "public"."UserStat"."streakDays", "public"."UserStat"."lastAttemptAt", "public"."UserStat"."intervalHeat", "public"."UserStat"."chordHeat" FROM "public"."UserStat" WHERE ("public"."UserStat"."userId" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."emailVerified", "public"."User"."image", "public"."User"."createdAt" FROM "public"."User" WHERE ("public"."User"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."Attempt" ("id","userId","drillId","prompt","latencyMs","answer","isCorrect","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING "public"."Attempt"."id"
+prisma:query INSERT INTO "public"."UserStat" ("userId","totalAttempts","correctAttempts","streakDays","lastAttemptAt","intervalHeat") VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT ("userId") DO UPDATE SET "totalAttempts" = ("public"."UserStat"."totalAttempts" + $7), "correctAttempts" = ("public"."UserStat"."correctAttempts" + $8), "lastAttemptAt" = $9, "streakDays" = $10, "intervalHeat" = $11 WHERE ("public"."UserStat"."userId" = $12 AND 1=1) RETURNING "public"."UserStat"."userId", "public"."UserStat"."totalAttempts", "public"."UserStat"."correctAttempts", "public"."UserStat"."streakDays"
+ POST /api/attempts 200 in 185ms
+prisma:query COMMIT
+prisma:query BEGIN
+prisma:query SELECT "public"."UserStat"."userId", "public"."UserStat"."totalAttempts", "public"."UserStat"."correctAttempts", "public"."UserStat"."streakDays", "public"."UserStat"."lastAttemptAt", "public"."UserStat"."intervalHeat", "public"."UserStat"."chordHeat" FROM "public"."UserStat" WHERE ("public"."UserStat"."userId" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."emailVerified", "public"."User"."image", "public"."User"."createdAt" FROM "public"."User" WHERE ("public"."User"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."Attempt" ("id","userId","drillId","prompt","latencyMs","answer","isCorrect","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING "public"."Attempt"."id"
+prisma:query INSERT INTO "public"."UserStat" ("userId","totalAttempts","correctAttempts","streakDays","lastAttemptAt","intervalHeat") VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT ("userId") DO UPDATE SET "totalAttempts" = ("public"."UserStat"."totalAttempts" + $7), "correctAttempts" = ("public"."UserStat"."correctAttempts" + $8), "lastAttemptAt" = $9, "streakDays" = $10, "intervalHeat" = $11 WHERE ("public"."UserStat"."userId" = $12 AND 1=1) RETURNING "public"."UserStat"."userId", "public"."UserStat"."totalAttempts", "public"."UserStat"."correctAttempts", "public"."UserStat"."streakDays"
+prisma:query COMMIT
+ POST /api/attempts 200 in 193ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 273ms
+ ✓ Compiled in 887ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 207ms
+ ✓ Compiled in 679ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 215ms
+ ✓ Compiled in 696ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 199ms
+ ✓ Compiled in 478ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 80ms
+ ✓ Compiled in 305ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 103ms
+ ✓ Compiled in 410ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 99ms
+ ✓ Compiled in 460ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 78ms
+ ✓ Compiled in 468ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 150ms
+ ✓ Compiled in 692ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 114ms
+ ✓ Compiled in 497ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 289ms
+ ✓ Compiled in 412ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 164ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 307ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 1322ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 1061ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 66ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 98ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 82ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 147ms
+ ✓ Compiled in 1217ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 361ms
+ ✓ Compiled in 543ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 473ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 138ms
+ ✓ Compiled in 828ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 191ms
+ ✓ Compiled in 309ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 148ms
+ ✓ Compiled in 887ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 152ms
+ ✓ Compiled in 544ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 627ms
+ ✓ Compiled in 650ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 133ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 305ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 105ms
+ ✓ Compiled in 1452ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 205ms
+ ✓ Compiled in 587ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 127ms
+ ✓ Compiled in 601ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 103ms
+ ✓ Compiled in 539ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 97ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 272ms
+ ✓ Compiled in 947ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 392ms
+ ✓ Compiled in 326ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 756ms
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 120ms
+ ✓ Compiled in 968ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 117ms
+ ✓ Compiled in 1191ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 153ms
+ ✓ Compiled in 655ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 2057ms
+ ✓ Compiled in 1011ms (3139 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 238ms
+ ✓ Compiled in 736ms (3139 modules)
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 239ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."Drill"."id" FROM "public"."Drill" WHERE ("public"."Drill"."type" = CAST($1::text AS "public"."DrillType") AND "public"."Drill"."name" = $2) LIMIT $3 OFFSET $4
+ GET /practice/intervals 200 in 386ms
+prisma:error Error in PostgreSQL connection: Error { kind: Closed, cause: None }
+prisma:error Error in PostgreSQL connection: Error { kind: Closed, cause: None }
+ ✓ Compiled in 1475ms (3139 modules)
+ ✓ Compiled in 443ms (3139 modules)
+ ✓ Compiled in 412ms (3139 modules)

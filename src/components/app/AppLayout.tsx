@@ -12,7 +12,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
     <div className="min-h-screen bg-brand">
       <AppHeader />
       <main className={cn(
-        "mx-auto w-[min(1120px,92vw)] py-8",
+        "mx-auto w-[min(1120px,92vw)] py-4 sm:py-6 md:py-8",
         "text-[color:var(--brand-text)]",
         className
       )}>
