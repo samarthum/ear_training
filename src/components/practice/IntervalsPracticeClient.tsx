@@ -1,17 +1,18 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ensureAudioReady, playContext, playInterval, cleanupAudio } from "@/lib/audio/transport";
 import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval, type IntervalLabel } from "@/lib/theory/intervals";
 import type { IntervalPrompt } from "@/types/drills";
 import { PracticeInterface } from "@/components/app/PracticeInterface";
 import { Button } from "@/components/ui/button";
 
-export default function IntervalsPracticeClient() {
+export default function IntervalsPracticeClient({ drillId }: { drillId: string }) {
   const [audioReady, setAudioReady] = useState(false);
   const [audioLoading, setAudioLoading] = useState(false);
   const [pending, setPending] = useState<IntervalPrompt | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const startedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -45,6 +46,7 @@ export default function IntervalsPracticeClient() {
       setTimeout(async () => {
         await playInterval({ key: p.key, interval: p.interval, direction: p.direction });
         setIsPlaying(false);
+        startedAtRef.current = performance.now();
       }, 900);
     } catch (error) {
       console.error("Error playing audio:", error);
@@ -56,6 +58,25 @@ export default function IntervalsPracticeClient() {
     if (!pending || isPlaying) return;
     const correct = isCorrectInterval(pending, label as IntervalLabel);
     setFeedback(correct ? "✅ Correct!" : "❌ Try again");
+
+    // POST attempt
+    try {
+      const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
+      await fetch("/api/attempts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          drillId,
+          prompt: pending,
+          answer: { selection: label },
+          isCorrect: correct,
+          latencyMs,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to post attempt", err);
+    }
+
     setTimeout(() => {
       setFeedback(null);
       if (correct) {
