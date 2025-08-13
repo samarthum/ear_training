@@ -631,13 +631,13 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
             </svg>
-            {isPlaying ? (<><Spinner className="size-4" /> Playing…</>) : "Play Question"}
+            Play Question
           </Button>
           <Button variant="outline" size="sm" disabled={!pending || isPlaying} onClick={playContextOnly} className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
             </svg>
-            {isPlaying ? (<><Spinner className="size-4" /> Playing…</>) : "Context"}
+            Context
           </Button>
         </div>
       )}
@@ -800,17 +800,10 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                 >
                   <span className="flex flex-col items-center justify-center">
                     <span className="leading-tight text-center">{getShortLabel(label)}</span>
-                    {selectedAnswer === label ? (
-                      <span className="inline-flex items-center gap-1 text-xs mt-1">
-                        <Spinner className="size-3" />
-                        Checking…
+                    {keyHint && showKeycaps && (
+                      <span className="hidden sm:inline text-xs mt-1 px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10">
+                        {keyHint.toUpperCase()}
                       </span>
-                    ) : (
-                      keyHint && showKeycaps && (
-                        <span className="hidden sm:inline text-xs mt-1 px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10">
-                          {keyHint.toUpperCase()}
-                        </span>
-                      )
                     )}
                   </span>
                 </Button>
