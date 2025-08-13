@@ -123,7 +123,12 @@ Execution rules
   - [x] Added `IntervalPrompt` type and narrowed interval drill types end-to-end
 - [ ] `lib/validators/schemas.ts` (Zod)
   - [ ] Schemas for OTP request/verify
-  - [ ] Schema for Attempts POST body
+  - [ ] Schema for Attempts POST body (`AttemptPostSchema`)
+    - [ ] Validate `{ drillId: string, prompt: PromptPayload, answer: Record<string, any>, isCorrect: boolean, latencyMs: number }`
+    - [ ] Start with union covering INTERVAL prompts; extend to CHORD/PROGRESSION later
+  - [ ] Optional: Session schemas
+    - [ ] `SessionStartSchema` → `{ drillType: DrillType, plannedQuestions: number }`
+    - [ ] `SessionCompleteSchema` → `{ sessionId: string, completed: number, correct: number, totalLatencyMs?: number }`
 
 ---
 
@@ -161,6 +166,11 @@ Execution rules
   - [ ] Zod-validate body `{ drillId, prompt, answer, isCorrect, latencyMs }`
   - [ ] Create `Attempt`
   - [ ] Upsert `UserStat`: totals, correct, `lastAttemptAt`, heatmaps
+    - [ ] Increment `totalAttempts`; increment `correctAttempts` if `isCorrect`
+    - [ ] Update `intervalHeat` with compact keys for analytics: use `${prompt.interval}-${prompt.direction}`
+      - [ ] Always increment `seen`
+      - [ ] Increment `miss` only if `!isCorrect`
+    - [ ] (Future) For chords/progressions, update `chordHeat`/`progressionHeat` similarly
   - [ ] Streak logic: same day = keep; yesterday = +1; else reset=1
   - [ ] Return `{ id, isCorrect, totals }`
 
@@ -178,6 +188,17 @@ Execution rules
   - [x] Proper loading states and disabled buttons during playback
   - [ ] POST attempt to API (not implemented yet)
   - [ ] Display real user stats (accuracy, streak, session count)
+  
+  Sessionization (finite sessions; UX and tracking)
+  - [ ] Add session controls to client
+    - [ ] Default session length selector (e.g., 10); options: 5/10/20
+    - [ ] Track `plannedQuestions`, `completed`, `correct`
+    - [ ] End-of-session summary: score, accuracy, average latency, quick retry button
+  - [ ] Progress UI
+    - [ ] Use existing `components/ui/progress.tsx` to show completion percent
+    - [ ] Show `Q x / y` and remaining count in the panel footer
+  - [ ] Disable indefinite loop: stop auto-advancing when `completed === plannedQuestions`
+  - [ ] Optional persistence (see Section "Practice Sessions" below)
 - [x] Verified: first sound <3s after gesture; no overlap; proper feedback ✅ **WORKING**
 
 ---
@@ -199,11 +220,29 @@ Execution rules
 
 ---
 
+### 12.5) Practice Sessions (Optional: Persistence + Aggregation)
+- [ ] Database (optional)
+  - [ ] Add `PracticeSession` model with fields:
+    - [ ] `id`, `userId`, `drillType: DrillType`, `plannedQuestions: Int`, `completed: Int`, `correct: Int`, `totalLatencyMs: Int?`, `isCompleted: Boolean`, `startedAt`, `endedAt?`
+  - [ ] Add optional `sessionId` to `Attempt` to link attempts to sessions
+  - [ ] `prisma generate` + `prisma db push`
+- [ ] API
+  - [ ] `POST /api/sessions/start` → create session; returns `{ sessionId }`
+  - [ ] `POST /api/sessions/complete` → mark completed; updates aggregates
+  - [ ] Auth guard via `auth()`; Zod-validate bodies
+- [ ] Client integration (Intervals)
+  - [ ] On start, call `/api/sessions/start` with `{ drillType: "INTERVAL", plannedQuestions }`
+  - [ ] On finish, call `/api/sessions/complete` with `{ sessionId, completed, correct, totalLatencyMs }`
+  - [ ] Pass `sessionId` with each Attempts POST (if `sessionId` exists)
+
+---
+
 ### 13) Adaptivity (v0-lite)
 - [ ] `lib/adaptivity/bias.ts`
   - [ ] Per-session weight map keyed by item
   - [ ] Increase on miss; decay/reset after N correct or at session end
   - [ ] Weighted choice sampler integrated in prompt selection
+  - [ ] Use interval+direction key (e.g., `3m-asc`) so adaptivity reflects melodic/harmonic difficulty
 - [ ] Integrate in Interval/Chord/Progression `onNext()` flows
 
 ---
@@ -211,10 +250,14 @@ Execution rules
 ### 14) Stats API + Dashboard Widgets
 - [ ] `app/api/stats/route.ts` (GET)
   - [ ] Auth guard
-  - [ ] Return `{ totals, intervalHeat, chordHeat, last7 }`
+  - [ ] Return `{ totals, intervalHeat, chordHeat, last7, sessions }`
+    - [ ] `totals`: `{ totalAttempts, correctAttempts, accuracy, streakDays }`
+    - [ ] `sessions`: `{ totalSessions, last7Sessions? }` (if PracticeSession enabled; else derive coarse estimate or omit)
+    - [ ] `intervalHeat`: flattened keys `${interval}-${direction}`; also return a top misses list: `topMissedIntervals`
   - [ ] Compute `last7` with day buckets from `Attempt`
 - [ ] `components/StatsSummary.tsx` (accuracy %, streak, last 7 days)
-- [ ] Wire `/dashboard/page.tsx` to API and render widgets
+  - [ ] Tiny report: "Where you struggle" (top 3 by miss rate) for intervals (by interval+direction)
+  - [ ] Wire `/dashboard/page.tsx` to API and render widgets
 
 ---
 
@@ -237,16 +280,18 @@ Execution rules
 ### 17) Testing (Unit, Integration, E2E)
 - [ ] Unit tests
   - [ ] Interval math and correctness checks
+  - [ ] Streak calculation util (same-day/yesterday/reset)
+  - [ ] Heat map reducer: increment seen/miss correctly for `${interval}-${direction}` keys
   - [ ] Progression mapping to chords
-  - [ ] Streak calculation util
   - [ ] Weighted sampler
 - [ ] Integration tests
   - [ ] OTP issue/verify: success, expired, wrong code, reuse, throttle
   - [ ] Attempts API: create attempt, update stats, heatmap increments
-  - [ ] Stats API: returns totals and last7 buckets
+  - [ ] Stats API: returns totals, last7 buckets, and top missed intervals
+  - [ ] (If enabled) Sessions API: start/complete flows persist and aggregate
 - [ ] E2E (Playwright or Cypress)
   - [ ] Sign-in (mock Google), magic link stub, OTP flows
-  - [ ] Interval drill loop end-to-end
+  - [ ] Interval drill session end-to-end: fixed-length session, progress bar, summary, and attempt posting
   - [ ] Chord/progression drill basic loops
 - [ ] CI
   - [ ] GitHub Actions: run `typecheck`, `lint`, unit tests; optional e2e on protected branches
