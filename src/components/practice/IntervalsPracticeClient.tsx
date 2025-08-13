@@ -45,6 +45,25 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     return label;
   };
 
+  // Keyboard shortcuts: answer selection (defined after onAnswer is declared, and without extra deps)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (phase !== "RUNNING" || isPlaying || !pending) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const key = e.key.toLowerCase();
+      const idx = KEY_BINDINGS.indexOf(key);
+      if (idx >= 0 && LABEL_ORDER[idx]) {
+        e.preventDefault();
+        const selected = LABEL_ORDER[idx];
+        onAnswer(selected);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // We intentionally omit onAnswer and arrays to avoid re-subscribing each render; guard with phase/isPlaying/pending
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, isPlaying, pending]);
+
   const GROUPS: { name: string; items: IntervalLabel[] }[] = useMemo(() => [
     { name: "2nds", items: ["m2", "M2"] },
     { name: "3rds", items: ["m3", "M3"] },
@@ -60,64 +79,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     };
   }, []);
 
-  // Keyboard shortcuts: answer selection
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (phase !== "RUNNING" || isPlaying || !pending) return;
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const key = e.key.toLowerCase();
-      const idx = KEY_BINDINGS.indexOf(key);
-      if (idx >= 0 && LABEL_ORDER[idx]) {
-        e.preventDefault();
-        const selected = LABEL_ORDER[idx];
-        // Call inline to avoid capturing stale function reference in deps
-        (async () => {
-          if (!pending || isPlaying || phase !== "RUNNING") return;
-          const correct = isCorrectInterval(pending, selected as IntervalLabel);
-          setFeedback(correct ? "✅ Correct!" : "❌ Try again");
-          try {
-            const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
-            if (correct) {
-              setCorrectCount((c) => c + 1);
-              setCompleted((n) => n + 1);
-              setTotalLatencyMs((t) => t + latencyMs);
-              const correctLabel = (INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval) as IntervalLabel;
-              setSessionStats((prev) => {
-                const entry = prev[correctLabel] || { seen: 0, correct: 0 };
-                return { ...prev, [correctLabel]: { seen: entry.seen + 1, correct: entry.correct + 1 } };
-              });
-            }
-            await fetch("/api/attempts", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                drillId,
-                prompt: pending,
-                answer: { selection: selected },
-                isCorrect: correct,
-                latencyMs,
-              }),
-            });
-          } catch (err) {
-            console.error("Failed to post attempt", err);
-          }
-
-          setTimeout(() => {
-            setFeedback(null);
-            const nextCount = correct ? completed + 1 : completed;
-            if (correct && nextCount < plannedQuestions) {
-              nextPrompt();
-            } else if (correct && nextCount >= plannedQuestions) {
-              setPhase("REVIEW");
-              setPending(null);
-            }
-          }, 1200);
-        })();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [phase, isPlaying, pending, completed, plannedQuestions, KEY_BINDINGS, LABEL_ORDER, drillId]);
+  // Keyboard shortcuts: answer selection (placed after nextPrompt defined to avoid ordering issues)
 
   const resetSession = () => {
     setCompleted(0);
@@ -154,7 +116,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     const p = buildIntervalPrompt({
       keyMode,
       fixedKey,
-      directions: directions as any,
+      directions,
     });
     setPending(p);
     setIsPlaying(true);
