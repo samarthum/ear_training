@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { ensureAudioReady, playContext, playInterval, cleanupAudio } from "@/lib/audio/transport";
 import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval, KEYS, DIRECTIONS, type IntervalLabel } from "@/lib/theory/intervals";
 import type { IntervalPrompt } from "@/types/drills";
@@ -25,6 +25,8 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   const [completed, setCompleted] = useState<number>(0);
   const [correctCount, setCorrectCount] = useState<number>(0);
   const sessionDone = plannedQuestions > 0 && completed >= plannedQuestions;
+  const [totalLatencyMs, setTotalLatencyMs] = useState<number>(0);
+  const [sessionStats, setSessionStats] = useState<Partial<Record<IntervalLabel, { seen: number; correct: number }>>>({});
 
   // Settings (Idle only editable)
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
@@ -32,11 +34,47 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   const [fixedKey, setFixedKey] = useState<string>("C");
   const [directions, setDirections] = useState<string[]>(["asc", "desc", "harm"]);
 
+  // Keyboard shortcuts mapping (12 intervals)
+  const LABEL_ORDER: IntervalLabel[] = ["m2","M2","m3","M3","P4","TT","P5","m6","M6","m7","M7","P8"];
+  const KEY_BINDINGS: string[] = ["1","2","3","4","5","6","7","8","9","0","q","w"];
+
+  const displayLabel = (label: IntervalLabel): string => {
+    if (label === "TT") return "Tritone (TT)";
+    if (label === "P8") return "Octave (P8)";
+    return label;
+  };
+
+  const GROUPS: { name: string; items: IntervalLabel[] }[] = useMemo(() => [
+    { name: "2nds", items: ["m2", "M2"] },
+    { name: "3rds", items: ["m3", "M3"] },
+    { name: "4/TT/5", items: ["P4", "TT", "P5"] },
+    { name: "6ths", items: ["m6", "M6"] },
+    { name: "7ths", items: ["m7", "M7"] },
+    { name: "Octave", items: ["P8"] },
+  ], []);
+
   useEffect(() => {
     return () => {
       cleanupAudio();
     };
   }, []);
+
+  // Keyboard shortcuts: answer selection
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (phase !== "RUNNING" || isPlaying || !pending) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const key = e.key.toLowerCase();
+      const idx = KEY_BINDINGS.indexOf(key);
+      if (idx >= 0 && LABEL_ORDER[idx]) {
+        e.preventDefault();
+        const selected = LABEL_ORDER[idx];
+        onAnswer(selected);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [phase, isPlaying, pending, completed, plannedQuestions]);
 
   const resetSession = () => {
     setCompleted(0);
@@ -45,6 +83,8 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     startedAtRef.current = null;
     setPending(null);
     setPhase("IDLE");
+    setTotalLatencyMs(0);
+    setSessionStats({} as Partial<Record<IntervalLabel, { seen: number; correct: number }>>);
   };
 
   const startPractice = async () => {
@@ -100,6 +140,12 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       if (correct) {
         setCorrectCount((c) => c + 1);
         setCompleted((n) => n + 1);
+        setTotalLatencyMs((t) => t + latencyMs);
+        const correctLabel = (INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval) as IntervalLabel;
+        setSessionStats((prev) => {
+          const entry = prev[correctLabel] || { seen: 0, correct: 0 };
+          return { ...prev, [correctLabel]: { seen: entry.seen + 1, correct: entry.correct + 1 } };
+        });
       }
       await fetch("/api/attempts", {
         method: "POST",
@@ -150,6 +196,12 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     }
 
     setCompleted((n) => n + 1);
+    setTotalLatencyMs((t) => t + latencyMs);
+    const revealedLabel = (INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval) as IntervalLabel;
+    setSessionStats((prev) => {
+      const entry = prev[revealedLabel] || { seen: 0, correct: 0 };
+      return { ...prev, [revealedLabel]: { seen: entry.seen + 1, correct: entry.correct } };
+    });
 
     const correctLabel = INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval;
     setFeedback(`Answer: ${correctLabel}`);
@@ -231,6 +283,12 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
 
     setCompleted((n) => n + 1);
     setFeedback("Skipped");
+    setTotalLatencyMs((t) => t + latencyMs);
+    const skippedLabel = (INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval) as IntervalLabel;
+    setSessionStats((prev) => {
+      const entry = prev[skippedLabel] || { seen: 0, correct: 0 };
+      return { ...prev, [skippedLabel]: { seen: entry.seen + 1, correct: entry.correct } };
+    });
     setTimeout(() => {
       setFeedback(null);
       const nextCount = completed + 1;
@@ -245,11 +303,19 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
 
   const accuracy = completed > 0 ? Math.round((correctCount / completed) * 100) : 0;
   const currentQuestionNumber = phase === "RUNNING" ? Math.min(plannedQuestions, Math.max(1, completed + 1)) : 0;
+  const averageSeconds = completed > 0 ? Math.round(((totalLatencyMs / completed) / 100) ) / 10 : 0; // one decimal
+  const sessionAccuracyList = useMemo(() => {
+    const entries = Object.entries(sessionStats) as [IntervalLabel, { seen: number; correct: number }][];
+    return entries
+      .filter(([, v]) => v.seen > 0)
+      .sort((a, b) => b[1].seen - a[1].seen)
+      .slice(0, 6);
+  }, [sessionStats]);
 
   return (
     <PracticeInterface
-      title="Interval Training"
-      description="Listen to the tonal context (drone + I chord), then identify the interval you hear. All intervals are presented in major key context."
+      title="Intervals"
+      description="Train melodic intervals in key context."
       onStart={startPractice}
       onReplay={replayAudio}
       isPlaying={isPlaying}
@@ -351,6 +417,17 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         </div>
       )}
 
+      {/* Mode pill */}
+      {phase === "RUNNING" && pending && (
+        <div className="flex justify-center mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[color:var(--brand-line)] text-xs text-[color:var(--brand-muted)]">
+            <span>{pending.direction === "asc" ? "Ascending" : pending.direction === "desc" ? "Descending" : "Harmonic"}</span>
+            <span>•</span>
+            <span>Key: {pending.key} major</span>
+          </div>
+        </div>
+      )}
+
       {/* Play panel */}
       {phase === "RUNNING" && (
         <div className="flex items-center justify-center gap-3 mb-2">
@@ -368,29 +445,64 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         </div>
       )}
 
-      {/* End-of-session summary */}
+      {/* End-of-session summary */
+      }
       {phase === "REVIEW" && (
         <div className="rounded-lg border border-[color:var(--brand-line)] p-4 bg-[color:var(--brand-panel)] mb-2">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="text-sm">Session complete</div>
+            <div className="text-sm font-medium">Session complete</div>
             <div className="text-sm">Score: {correctCount} / {plannedQuestions} ({accuracy}%)</div>
-            <Button variant="brand" onClick={startPractice}>Start new session</Button>
+            <div className="text-sm">Average time: {averageSeconds.toFixed(1)} s</div>
+          </div>
+          {sessionAccuracyList.length > 0 && (
+            <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {sessionAccuracyList.map(([lab, v]) => {
+                const pct = v.seen > 0 ? Math.round((v.correct / v.seen) * 100) : 0;
+                return (
+                  <div key={lab} className="flex items-center justify-between px-3 py-2 rounded border border-[color:var(--brand-line)] text-sm">
+                    <span>{displayLabel(lab)}</span>
+                    <span className="text-[color:var(--brand-muted)]">{pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div className="mt-4 flex items-center justify-end gap-2">
+            <Button variant="secondary" onClick={() => { setPhase("IDLE"); setSettingsOpen(true); }}>Adjust settings</Button>
+            <Button variant="brand" onClick={startPractice}>Restart</Button>
           </div>
         </div>
       )}
 
       {phase === "RUNNING" && (
-        <div className="grid grid-cols-4 gap-3">
-          {INTERVAL_CHOICES.map((opt) => (
-            <Button
-              key={opt.value}
-              variant="brand"
-              disabled={!pending || isPlaying || phase !== "RUNNING"}
-              className="aspect-square text-lg font-semibold hover:scale-105 transition-transform"
-              onClick={() => onAnswer(opt.label)}
-            >
-              {opt.label}
-            </Button>
+        <div className="space-y-4">
+          {GROUPS.map((group) => (
+            <div key={group.name} className="space-y-2">
+              <div className="text-xs uppercase tracking-wide text-[color:var(--brand-muted)]">{group.name}</div>
+              <div className="grid grid-cols-4 gap-3">
+                {group.items.map((label) => {
+                  const keyHint = KEY_BINDINGS[LABEL_ORDER.indexOf(label)];
+                  return (
+                    <Button
+                      key={label}
+                      variant="brand"
+                      disabled={!pending || isPlaying}
+                      className="aspect-square text-base font-semibold hover:scale-105 transition-transform relative"
+                      onClick={() => onAnswer(label)}
+                      aria-keyshortcuts={keyHint}
+                      title={keyHint ? `Shortcut: ${keyHint.toUpperCase()}` : undefined}
+                    >
+                      {displayLabel(label)}
+                      {keyHint && (
+                        <span className="absolute bottom-1 right-1 text-[10px] px-1 py-0.5 rounded border border-[color:var(--brand-line)] text-[color:var(--brand-muted)]">
+                          {keyHint.toUpperCase()}
+                        </span>
+                      )}
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
           ))}
         </div>
       )}
