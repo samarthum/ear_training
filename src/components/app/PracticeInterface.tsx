@@ -33,7 +33,7 @@ export function PracticeInterface({
   belowPanel
 }: PracticeInterfaceProps) {
   return (
-    <div className={cn("h-screen flex flex-col overflow-hidden", className)}>
+    <div className={cn("min-h-screen flex flex-col", className)}>
       {/* Header - Minimal */}
       <div className="text-center py-2 border-b border-[color:var(--brand-line)]">
         <h1 className="text-lg font-bold text-[color:var(--brand-text)]">
@@ -47,7 +47,7 @@ export function PracticeInterface({
       </div>
 
       {/* Practice Panel - Auto-sized container at top */}
-      <div className="flex-1 flex flex-col items-center p-3 min-h-0">
+      <div className="flex-1 flex flex-col items-center p-3">
         <div 
           className={cn(
             "rounded-lg border border-[color:var(--brand-line)] p-4 max-w-2xl w-full",

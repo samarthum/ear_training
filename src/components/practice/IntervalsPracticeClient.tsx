@@ -680,30 +680,30 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       {/* End-of-session summary */}
       {phase === "REVIEW" && (
         <div className="flex-1 flex flex-col">
-          <div className="text-center mb-4">
-            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-[color:var(--brand-text)] mb-2">
+          <div className="text-center mb-3">
+            <div className="flex items-center justify-center gap-2 text-xl font-bold text-[color:var(--brand-text)] mb-2">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.41 13.59l-2.83-2.83-1.41 1.41 4.24 4.24 7.07-7.07-1.41-1.41-5.66 5.66z"/>
               </svg>
               Session Complete!
             </div>
-            <div className="text-lg text-[color:var(--brand-muted)]">
+            <div className="text-base text-[color:var(--brand-muted)]">
               Great work on your interval training
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/30 border border-blue-200 dark:border-blue-800">
-              <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{correctCount}/{plannedQuestions}</div>
-              <div className="text-sm text-blue-600 dark:text-blue-400">Correct</div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/30 border border-blue-200 dark:border-blue-800">
+              <div className="text-xl font-bold text-blue-700 dark:text-blue-300">{correctCount}/{plannedQuestions}</div>
+              <div className="text-xs text-blue-600 dark:text-blue-400">Correct</div>
             </div>
-            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/30 border border-emerald-200 dark:border-emerald-800">
-              <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{accuracy}%</div>
-              <div className="text-sm text-emerald-600 dark:text-emerald-400">Accuracy</div>
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/30 border border-emerald-200 dark:border-emerald-800">
+              <div className="text-xl font-bold text-emerald-700 dark:text-emerald-300">{accuracy}%</div>
+              <div className="text-xs text-emerald-600 dark:text-emerald-400">Accuracy</div>
             </div>
-            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/30 border border-amber-200 dark:border-amber-800">
-              <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">{averageSeconds.toFixed(1)}s</div>
-              <div className="text-sm text-amber-600 dark:text-amber-400">Avg Time</div>
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/30 border border-amber-200 dark:border-amber-800">
+              <div className="text-xl font-bold text-amber-700 dark:text-amber-300">{averageSeconds.toFixed(1)}s</div>
+              <div className="text-xs text-amber-600 dark:text-amber-400">Avg Time</div>
             </div>
           </div>
 
