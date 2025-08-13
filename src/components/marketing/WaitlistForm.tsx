@@ -2,9 +2,11 @@
 import * as React from "react"
 import { Container } from "./Container"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 
 export function WaitlistForm() {
   const [message, setMessage] = React.useState<string>("")
+  const [submitting, setSubmitting] = React.useState<boolean>(false)
   const formRef = React.useRef<HTMLFormElement | null>(null)
 
   function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
@@ -15,6 +17,7 @@ export function WaitlistForm() {
       setMessage("Please enter a valid email.")
       return
     }
+    setSubmitting(true)
     try {
       const list = JSON.parse(localStorage.getItem("waitlist") || "[]") as string[]
       if (!list.includes(email)) list.push(email)
@@ -23,6 +26,8 @@ export function WaitlistForm() {
       formRef.current?.reset()
     } catch {
       setMessage("Saved locally. Thank you!")
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -41,8 +46,8 @@ export function WaitlistForm() {
               aria-label="Email"
               className="min-w-[180px] flex-1 rounded-[14px] border border-[color:var(--brand-line)] bg-[color:var(--brand-panel)] px-3.5 py-2.5 text-[color:var(--brand-text)]"
             />
-            <Button variant="brandPrimary" shape="pill" type="submit">
-              Join
+            <Button variant="brandPrimary" shape="pill" type="submit" disabled={submitting}>
+              {submitting && <Spinner className="size-4" />} {submitting ? "Joining…" : "Join"}
             </Button>
           </form>
           <div className="text-[12px] text-[color:var(--brand-muted)] mt-2" role="status" aria-live="polite" style={{ minHeight: "1.2em" }}>

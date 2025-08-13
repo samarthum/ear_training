@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { BrandMark } from "@/components/marketing/BrandMark";
 import Link from "next/link";
 
@@ -12,6 +13,7 @@ export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const requestOtp = async () => {
@@ -70,12 +72,16 @@ export default function SignInPage() {
         <div className="w-full max-w-md rounded-xl p-8 border border-[color:var(--brand-line)] bg-brand-panel">
           <div className="space-y-6">
             <Button
-              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              onClick={() => {
+                setGoogleLoading(true);
+                void signIn("google", { callbackUrl: "/dashboard" });
+              }}
               variant="brandPrimary"
               size="lg"
               className="w-full"
+              disabled={googleLoading}
             >
-              Continue with Google
+              {googleLoading && <Spinner className="size-4" />} {googleLoading ? "Redirecting…" : "Continue with Google"}
             </Button>
 
             <div className="relative">
@@ -110,7 +116,7 @@ export default function SignInPage() {
                   variant="brand"
                   className="flex-1"
                 >
-                  {loading ? "Sending..." : "Get code"}
+                  {loading && <Spinner className="size-4" />} {loading ? "Sending…" : "Get code"}
                 </Button>
                 <input
                   type="text"
@@ -127,7 +133,7 @@ export default function SignInPage() {
                   variant="brandPrimary"
                   className="flex-1"
                 >
-                  {loading ? "Verifying..." : "Sign in"}
+                  {loading && <Spinner className="size-4" />} {loading ? "Verifying…" : "Sign in"}
                 </Button>
               </div>
             </div>

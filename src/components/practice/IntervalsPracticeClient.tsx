@@ -6,6 +6,7 @@ import type { IntervalPrompt } from "@/types/drills";
 import type { IntervalDirection } from "@/types/drills";
 import { PracticeInterface } from "@/components/app/PracticeInterface";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
@@ -30,6 +31,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [wrongAttempts, setWrongAttempts] = useState<number>(0);
+  const [actionLoading, setActionLoading] = useState<"skip" | "reveal" | null>(null);
   const sessionDone = plannedQuestions > 0 && completed >= plannedQuestions;
   const [totalLatencyMs, setTotalLatencyMs] = useState<number>(0);
   const [sessionStats, setSessionStats] = useState<Partial<Record<IntervalLabel, { seen: number; correct: number }>>>({});
@@ -257,6 +259,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
 
     try {
+      setActionLoading("reveal");
       await fetch("/api/attempts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -271,6 +274,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     } catch (err) {
       console.error("Failed to post skipped attempt", err);
     }
+    setActionLoading(null);
 
     setCompleted((n) => n + 1);
     setTotalLatencyMs((t) => t + latencyMs);
@@ -345,6 +349,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
 
     try {
+      setActionLoading("skip");
       await fetch("/api/attempts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -359,6 +364,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     } catch (err) {
       console.error("Failed to post skipped attempt", err);
     }
+    setActionLoading(null);
 
     setCompleted((n) => n + 1);
     setFeedback("Skipped");
@@ -625,13 +631,13 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
             </svg>
-            Play Question
+            {isPlaying ? (<><Spinner className="size-4" /> Playing…</>) : "Play Question"}
           </Button>
           <Button variant="outline" size="sm" disabled={!pending || isPlaying} onClick={playContextOnly} className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
             </svg>
-            Context
+            {isPlaying ? (<><Spinner className="size-4" /> Playing…</>) : "Context"}
           </Button>
         </div>
       )}
@@ -671,17 +677,17 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
           </div>
           
           <div className="flex w-full justify-between sm:w-auto sm:justify-normal sm:gap-2">
-            <Button variant="ghost" size="sm" disabled={!pending || isPlaying} onClick={skip} className="text-[color:var(--brand-muted)]">
-              Skip
+            <Button variant="ghost" size="sm" disabled={!pending || isPlaying || actionLoading !== null} onClick={skip} className="text-[color:var(--brand-muted)]">
+              {actionLoading === "skip" ? (<><Spinner className="size-4" /> Skipping…</>) : "Skip"}
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              disabled={!pending || isPlaying || wrongAttempts === 0} 
+              disabled={!pending || isPlaying || wrongAttempts === 0 || actionLoading !== null} 
               onClick={giveUp} 
               className="text-[color:var(--brand-muted)]"
             >
-              Reveal answer
+              {actionLoading === "reveal" ? (<><Spinner className="size-4" /> Revealing…</>) : "Reveal answer"}
             </Button>
           </div>
         </div>
@@ -751,11 +757,11 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
               </svg>
               Adjust settings
             </Button>
-            <Button variant="brandPrimary" size="lg" onClick={startPractice} className="flex items-center gap-2">
+            <Button variant="brandPrimary" size="lg" onClick={startPractice} className="flex items-center gap-2" disabled={audioLoading}>
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
               </svg>
-              Practice again
+              {audioLoading && <Spinner className="size-4" />} {audioLoading ? "Loading…" : "Practice again"}
             </Button>
           </div>
         </div>
@@ -794,10 +800,17 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                 >
                   <span className="flex flex-col items-center justify-center">
                     <span className="leading-tight text-center">{getShortLabel(label)}</span>
-                    {keyHint && showKeycaps && (
-                      <span className="hidden sm:inline text-xs mt-1 px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10">
-                        {keyHint.toUpperCase()}
+                    {selectedAnswer === label ? (
+                      <span className="inline-flex items-center gap-1 text-xs mt-1">
+                        <Spinner className="size-3" />
+                        Checking…
                       </span>
+                    ) : (
+                      keyHint && showKeycaps && (
+                        <span className="hidden sm:inline text-xs mt-1 px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10">
+                          {keyHint.toUpperCase()}
+                        </span>
+                      )
                     )}
                   </span>
                 </Button>
