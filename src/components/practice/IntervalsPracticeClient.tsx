@@ -82,10 +82,11 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     // POST attempt
     try {
       const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
-      const nextCompleted = completed + 1;
-      if (correct) setCorrectCount((c) => c + 1);
-      setCompleted(nextCompleted);
-      setTotalLatencyMs((t) => t + latencyMs);
+      if (correct) {
+        setCorrectCount((c) => c + 1);
+        setCompleted((n) => n + 1);
+        setTotalLatencyMs((t) => t + latencyMs);
+      }
       await fetch("/api/attempts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -108,6 +109,39 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         nextPrompt();
       }
     }, 1200);
+  };
+
+  const giveUp = async () => {
+    if (!pending || isPlaying || sessionDone) return;
+    const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
+
+    try {
+      await fetch("/api/attempts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          drillId,
+          prompt: pending,
+          answer: { skipped: true },
+          isCorrect: false,
+          latencyMs,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to post skipped attempt", err);
+    }
+
+    setCompleted((n) => n + 1);
+    setTotalLatencyMs((t) => t + latencyMs);
+
+    const correctLabel = INTERVAL_CHOICES.find((c) => c.value === pending.interval)?.label || pending.interval;
+    setFeedback(`⏭️ Skipped. Answer: ${correctLabel}`);
+    setTimeout(() => {
+      setFeedback(null);
+      if (completed + 1 < plannedQuestions) {
+        nextPrompt();
+      }
+    }, 1400);
   };
 
   const replayAudio = async () => {
@@ -170,6 +204,13 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
           </div>
         </div>
         <Progress value={plannedQuestions ? Math.min(100, Math.round((completed / plannedQuestions) * 100)) : 0} />
+      </div>
+
+      {/* Prompt controls */}
+      <div className="flex items-center justify-end mb-2">
+        <Button variant="secondary" disabled={!pending || isPlaying || sessionDone} onClick={giveUp}>
+          Give up · Show answer
+        </Button>
       </div>
 
       {/* End-of-session summary */}

@@ -71,6 +71,12 @@ export async function POST(req: Request) {
     const result = await prisma.$transaction(async (tx) => {
       const existing = await tx.userStat.findUnique({ where: { userId } });
 
+      // Ensure a user row exists to satisfy FK constraints (robustness across envs)
+      const userRow = await tx.user.findUnique({ where: { id: userId } });
+      if (!userRow) {
+        await tx.user.create({ data: { id: userId } });
+      }
+
       // Prepare heat updates (intervals only for now)
       let nextIntervalHeat: IntervalHeatMap | undefined = undefined;
       if (prompt.kind === "INTERVAL") {
