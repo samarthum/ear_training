@@ -5,45 +5,58 @@ import { usePathname, useSearchParams } from "next/navigation"
 export function RouteProgress() {
   const pathname = usePathname()
   const search = useSearchParams()
+  const searchKey = search?.toString()
   const [progress, setProgress] = React.useState(0)
   const [visible, setVisible] = React.useState(false)
   const rafRef = React.useRef<number | null>(null)
   const hideTimeoutRef = React.useRef<number | null>(null)
+  const completeTimeoutRef = React.useRef<number | null>(null)
 
   React.useEffect(() => {
-    // clear any pending hide timeouts when a new navigation starts
-    if (hideTimeoutRef.current) {
-      window.clearTimeout(hideTimeoutRef.current)
-      hideTimeoutRef.current = null
-    }
+    // cancel any previous timers/raf
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
+    if (completeTimeoutRef.current) window.clearTimeout(completeTimeoutRef.current)
+    rafRef.current = null
+    hideTimeoutRef.current = null
+    completeTimeoutRef.current = null
 
-    // start
+    // start on navigation commit
     setVisible(true)
     setProgress(10)
-    // simulate progress while waiting for route to settle
-    const start = performance.now()
+
+    const startedAt = performance.now()
     const tick = () => {
       setProgress((p) => {
-        if (p < 90) return p + Math.max(0.5, (performance.now() - start) / 2000)
+        if (p < 90) return p + Math.max(0.5, (performance.now() - startedAt) / 2000)
         return p
       })
       rafRef.current = window.requestAnimationFrame(tick)
     }
     rafRef.current = window.requestAnimationFrame(tick)
 
-    return () => {
-      // complete on route change commit
+    // auto-complete shortly after commit to avoid hanging
+    completeTimeoutRef.current = window.setTimeout(() => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       setProgress(100)
-      // let the bar show completion briefly, then hide
       hideTimeoutRef.current = window.setTimeout(() => {
         setVisible(false)
         setProgress(0)
         hideTimeoutRef.current = null
       }, 250) as unknown as number
+      completeTimeoutRef.current = null
+    }, 600) as unknown as number
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
+      if (completeTimeoutRef.current) window.clearTimeout(completeTimeoutRef.current)
+      rafRef.current = null
+      hideTimeoutRef.current = null
+      completeTimeoutRef.current = null
     }
     // react to both pathname and search changes
-  }, [pathname, search])
+  }, [pathname, searchKey])
 
   if (!visible) return null
 
