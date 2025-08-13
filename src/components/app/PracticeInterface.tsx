@@ -15,6 +15,7 @@ interface PracticeInterfaceProps {
   currentInfo?: string
   hasStarted?: boolean
   className?: string
+  belowPanel?: React.ReactNode
 }
 
 export function PracticeInterface({ 
@@ -28,7 +29,8 @@ export function PracticeInterface({
   feedback,
   currentInfo,
   hasStarted = false,
-  className
+  className,
+  belowPanel
 }: PracticeInterfaceProps) {
   return (
     <div className={cn("h-screen flex flex-col overflow-hidden", className)}>
@@ -104,6 +106,11 @@ export function PracticeInterface({
             </div>
           )}
         </div>
+        {belowPanel && (
+          <div className="w-full max-w-2xl mt-2 flex items-center justify-center">
+            {belowPanel}
+          </div>
+        )}
       </div>
     </div>
   )

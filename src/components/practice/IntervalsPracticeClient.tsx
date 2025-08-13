@@ -401,6 +401,27 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       feedback={feedback}
       hasStarted={phase !== "IDLE"}
       currentInfo={undefined}
+      belowPanel={phase === "RUNNING" && pending ? (
+        <div className="flex justify-center mb-3">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[color:var(--brand-panel)] border border-[color:var(--brand-line)] text-sm font-medium text-[color:var(--brand-text)] shadow-sm">
+            <span className={cn(
+              "inline-flex items-center gap-2",
+              pending.direction === "asc" && "text-emerald-600 dark:text-emerald-400",
+              pending.direction === "desc" && "text-blue-600 dark:text-blue-400",
+              pending.direction === "harm" && "text-purple-600 dark:text-purple-400"
+            )}>
+              {pending.direction === "asc" ? 
+                <>Ascending</> :
+                pending.direction === "desc" ? 
+                <>Descending</> :
+                <>Harmonic</>
+              }
+            </span>
+            <span className="text-[color:var(--brand-muted)]">•</span>
+            <span>Key: {pending.key} major</span>
+          </div>
+        </div>
+      ) : null}
     >
       {/* Idle: settings only */}
       {phase === "IDLE" && (
@@ -605,71 +626,41 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         </div>
       )}
 
-      {/* Mode pill */}
-      {phase === "RUNNING" && pending && (
-        <div className="flex justify-center mb-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[color:var(--brand-panel)] border border-[color:var(--brand-line)] text-sm font-medium text-[color:var(--brand-text)] shadow-sm">
-            <span className={cn(
-              "inline-flex items-center gap-2",
-              pending.direction === "asc" && "text-emerald-600 dark:text-emerald-400",
-              pending.direction === "desc" && "text-blue-600 dark:text-blue-400",
-              pending.direction === "harm" && "text-purple-600 dark:text-purple-400"
-            )}>
-              {pending.direction === "asc" ? 
-                <><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg> Ascending</> :
-                pending.direction === "desc" ? 
-                <><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg> Descending</> :
-                <><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg> Harmonic</>
-              }
-            </span>
-            <span className="text-[color:var(--brand-muted)]">•</span>
-            <span>Key: {pending.key} major</span>
-          </div>
-        </div>
-      )}
+      {/* Mode pill moved below panel */}
 
       {/* Helper actions */}
       {phase === "RUNNING" && (
         <div className="flex items-center justify-between mb-2">
-          <Dialog open={keyboardHelpOpen} onOpenChange={setKeyboardHelpOpen}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-[color:var(--brand-muted)] flex items-center gap-1">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-                </svg>
-                ?
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Keyboard Shortcuts</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-3">
-                <div className="text-sm text-[color:var(--brand-muted)] mb-3">Use number keys 1-4 to select answers quickly:</div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {KEY_BINDINGS.map((key, idx) => (
-                    <div key={key} className="flex items-center justify-between px-3 py-2 rounded bg-gray-50 dark:bg-gray-800">
-                      <span>Option {idx + 1}</span>
-                      <kbd className="px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 rounded font-mono">{key.toUpperCase()}</kbd>
-                    </div>
-                  ))}
+          {/* Helper tooltip hidden on mobile to reduce clutter */}
+          <div className="hidden sm:block">
+            <Dialog open={keyboardHelpOpen} onOpenChange={setKeyboardHelpOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-[color:var(--brand-muted)] flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                  ?
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Keyboard Shortcuts</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3">
+                  <div className="text-sm text-[color:var(--brand-muted)] mb-3">Use number keys 1-4 to select answers quickly:</div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {KEY_BINDINGS.map((key, idx) => (
+                      <div key={key} className="flex items-center justify-between px-3 py-2 rounded bg-gray-50 dark:bg-gray-800">
+                        <span>Option {idx + 1}</span>
+                        <kbd className="px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 rounded font-mono">{key.toUpperCase()}</kbd>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-xs text-[color:var(--brand-muted)] mt-3">Keys correspond to button positions: 1=top-left, 2=top-right, 3=bottom-left, 4=bottom-right</div>
                 </div>
-                <div className="text-xs text-[color:var(--brand-muted)] mt-3">Keys correspond to button positions: 1=top-left, 2=top-right, 3=bottom-left, 4=bottom-right</div>
-                <div className="flex items-center gap-2 pt-2 border-t">
-                  <input 
-                    type="checkbox" 
-                    id="show-keycaps" 
-                    checked={showKeycaps} 
-                    onChange={(e) => setShowKeycaps(e.target.checked)}
-                    className="rounded"
-                  />
-                  <label htmlFor="show-keycaps" className="text-sm text-[color:var(--brand-muted)]">Show key hints on buttons</label>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
+          </div>
           
-          <div className="flex gap-2">
+          <div className="flex w-full justify-between sm:w-auto sm:justify-normal sm:gap-2">
             <Button variant="ghost" size="sm" disabled={!pending || isPlaying} onClick={skip} className="text-[color:var(--brand-muted)]">
               Skip
             </Button>
@@ -779,12 +770,13 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                   className={cn(
                     "min-h-[64px] text-sm font-semibold hover:scale-[1.02] active:scale-[0.98]",
                     "transition-all duration-300 relative px-3",
-                    "border-2 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-accent)] focus:ring-offset-2",
+                    // Stronger default appearance for unselected options
+                    !isSelected && !isRevealed && "border border-[color:var(--brand-line)] bg-white/80 dark:bg-gray-900/40 shadow-sm",
+                    "focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-accent)] focus:ring-offset-2",
                     // Visual feedback states
                     isSelected && isCorrect && "border-green-500 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 animate-pulse",
                     isSelected && !isCorrect && "border-red-500 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200",
-                    isRevealed && "border-blue-500 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 ring-2 ring-blue-300",
-                    !isSelected && !isRevealed && "border-transparent hover:border-[color:var(--brand-accent)]"
+                    isRevealed && "border-blue-500 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 ring-2 ring-blue-300"
                   )}
                   onClick={() => onAnswer(label)}
                   aria-keyshortcuts={keyHint}
@@ -800,7 +792,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                       </div>
                     </span>
                     {keyHint && showKeycaps && (
-                      <span className="text-xs mt-1 px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10">
+                      <span className="hidden sm:inline text-xs mt-1 px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10">
                         {keyHint.toUpperCase()}
                       </span>
                     )}
