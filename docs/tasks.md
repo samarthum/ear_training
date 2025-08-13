@@ -123,9 +123,9 @@ Execution rules
   - [x] Added `IntervalPrompt` type and narrowed interval drill types end-to-end
 - [ ] `lib/validators/schemas.ts` (Zod)
   - [ ] Schemas for OTP request/verify
-  - [ ] Schema for Attempts POST body (`AttemptPostSchema`)
-    - [ ] Validate `{ drillId: string, prompt: PromptPayload, answer: Record<string, any>, isCorrect: boolean, latencyMs: number }`
-    - [ ] Start with union covering INTERVAL prompts; extend to CHORD/PROGRESSION later
+  - [x] Schema for Attempts POST body (`AttemptPostSchema`)
+    - [x] Validate `{ drillId: string, prompt: PromptPayload, answer: Record<string, any>, isCorrect: boolean, latencyMs: number }`
+    - [x] Start with union covering INTERVAL prompts; extend to CHORD/PROGRESSION later
   - [ ] Optional: Session schemas
     - [ ] `SessionStartSchema` → `{ drillType: DrillType, plannedQuestions: number }`
     - [ ] `SessionCompleteSchema` → `{ sessionId: string, completed: number, correct: number, totalLatencyMs?: number }`
@@ -161,18 +161,18 @@ Execution rules
 ---
 
 ### 9) Attempts API (Storage + Aggregation)
-- [ ] `app/api/attempts/route.ts` (POST)
-  - [ ] Auth via `auth()`; 401 if missing
-  - [ ] Zod-validate body `{ drillId, prompt, answer, isCorrect, latencyMs }`
-  - [ ] Create `Attempt`
-  - [ ] Upsert `UserStat`: totals, correct, `lastAttemptAt`, heatmaps
-    - [ ] Increment `totalAttempts`; increment `correctAttempts` if `isCorrect`
-    - [ ] Update `intervalHeat` with compact keys for analytics: use `${prompt.interval}-${prompt.direction}`
-      - [ ] Always increment `seen`
-      - [ ] Increment `miss` only if `!isCorrect`
+- [x] `app/api/attempts/route.ts` (POST)
+  - [x] Auth via `auth()`; 401 if missing
+  - [x] Zod-validate body `{ drillId, prompt, answer, isCorrect, latencyMs }`
+  - [x] Create `Attempt`
+  - [x] Upsert `UserStat`: totals, correct, `lastAttemptAt`, heatmaps
+    - [x] Increment `totalAttempts`; increment `correctAttempts` if `isCorrect`
+    - [x] Update `intervalHeat` with compact keys for analytics: use `${prompt.interval}-${prompt.direction}`
+      - [x] Always increment `seen`
+      - [x] Increment `miss` only if `!isCorrect`
     - [ ] (Future) For chords/progressions, update `chordHeat`/`progressionHeat` similarly
-  - [ ] Streak logic: same day = keep; yesterday = +1; else reset=1
-  - [ ] Return `{ id, isCorrect, totals }`
+  - [x] Streak logic: same day = keep; yesterday = +1; else reset=1
+  - [x] Return `{ id, isCorrect, totals }`
 
 ---
 
@@ -186,18 +186,20 @@ Execution rules
   - [x] `onAnswer(choice)`: compute correctness → feedback → auto-advance on correct ✅ **WORKING**
   - [x] Replay functionality ✅ **WORKING**
   - [x] Proper loading states and disabled buttons during playback
-  - [ ] POST attempt to API (not implemented yet)
+  - [x] POST attempt to API
   - [ ] Display real user stats (accuracy, streak, session count)
   
   Sessionization (finite sessions; UX and tracking)
-  - [ ] Add session controls to client
-    - [ ] Default session length selector (e.g., 10); options: 5/10/20
-    - [ ] Track `plannedQuestions`, `completed`, `correct`
-    - [ ] End-of-session summary: score, accuracy, average latency, quick retry button
-  - [ ] Progress UI
-    - [ ] Use existing `components/ui/progress.tsx` to show completion percent
-    - [ ] Show `Q x / y` and remaining count in the panel footer
-  - [ ] Disable indefinite loop: stop auto-advancing when `completed === plannedQuestions`
+  - [x] Add session controls to client
+    - [x] Default session length selector (e.g., 10); options: 5/10/20
+    - [x] Track `plannedQuestions`, `completed`, `correct`
+    - [x] End-of-session summary: score, accuracy, average latency, quick retry button
+  - [x] Progress UI
+    - [x] Use existing `components/ui/progress.tsx` to show completion percent
+    - [x] Show `Q x / y` and remaining count in the panel
+  - [x] Disable indefinite loop: stop auto-advancing when `completed === plannedQuestions`
+  - [x] Do not increment `completed` on wrong answers for the same prompt
+  - [x] Add "Give up · Show answer" control to reveal and skip to next prompt
   - [ ] Optional persistence (see Section "Practice Sessions" below)
 - [x] Verified: first sound <3s after gesture; no overlap; proper feedback ✅ **WORKING**
 
