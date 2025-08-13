@@ -8,7 +8,7 @@ import { PracticeInterface } from "@/components/app/PracticeInterface";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 
@@ -570,6 +570,15 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                   </div>
                   
                   {/* Audio preferences: temporarily removed for a simpler settings UI */}
+                  {/* Footer: Save/Close actions */}
+                  <div className="pt-2 mt-2 border-t border-[color:var(--brand-line)] flex justify-end gap-2 sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                    <DialogClose asChild>
+                      <Button variant="outline">Close</Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <Button variant="brandPrimary">Save settings</Button>
+                    </DialogClose>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
