@@ -185,6 +185,64 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
     }
   };
 
+  const playContextOnly = async () => {
+    if (!pending || !audioReady || isPlaying) return;
+    setIsPlaying(true);
+    try {
+      await playContext(pending.key);
+      setIsPlaying(false);
+    } catch (error) {
+      console.error("Error playing context:", error);
+      setIsPlaying(false);
+    }
+  };
+
+  const playQuestionOnly = async () => {
+    if (!pending || !audioReady || isPlaying) return;
+    setIsPlaying(true);
+    try {
+      await playInterval({ key: pending.key, interval: pending.interval, direction: pending.direction });
+      setIsPlaying(false);
+    } catch (error) {
+      console.error("Error playing question:", error);
+      setIsPlaying(false);
+    }
+  };
+
+  const skip = async () => {
+    if (!pending || isPlaying || phase !== "RUNNING") return;
+    const latencyMs = startedAtRef.current ? Math.max(0, Math.round(performance.now() - startedAtRef.current)) : 0;
+
+    try {
+      await fetch("/api/attempts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          drillId,
+          prompt: pending,
+          answer: { skipped: true },
+          isCorrect: false,
+          latencyMs,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to post skipped attempt", err);
+    }
+
+    setCompleted((n) => n + 1);
+    setFeedback("Skipped");
+    setTimeout(() => {
+      setFeedback(null);
+      const nextCount = completed + 1;
+      if (nextCount < plannedQuestions) {
+        nextPrompt();
+      } else {
+        setPhase("REVIEW");
+        setPending(null);
+      }
+    }, 800);
+  };
+
   const accuracy = completed > 0 ? Math.round((correctCount / completed) * 100) : 0;
   const currentQuestionNumber = phase === "RUNNING" ? Math.min(plannedQuestions, Math.max(1, completed + 1)) : 0;
 
@@ -293,12 +351,20 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         </div>
       )}
 
-      {/* Prompt controls */}
+      {/* Play panel */}
       {phase === "RUNNING" && (
-        <div className="flex items-center justify-end mb-2">
-          <Button variant="secondary" disabled={!pending || isPlaying || phase !== "RUNNING"} onClick={giveUp}>
-            Reveal answer
-          </Button>
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <Button variant="secondary" disabled={!pending || isPlaying} onClick={playContextOnly}>Play Context</Button>
+          <Button variant="secondary" disabled={!pending || isPlaying} onClick={playQuestionOnly}>Play Question</Button>
+          <Button variant="secondary" disabled={!pending || isPlaying} onClick={replayAudio}>Replay</Button>
+        </div>
+      )}
+
+      {/* Helper actions */}
+      {phase === "RUNNING" && (
+        <div className="flex items-center justify-end mb-2 gap-2">
+          <Button variant="ghost" disabled={!pending || isPlaying} onClick={skip}>Skip</Button>
+          <Button variant="secondary" disabled={!pending || isPlaying} onClick={giveUp}>Reveal answer</Button>
         </div>
       )}
 
