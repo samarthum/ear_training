@@ -440,8 +440,8 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       {/* Helper actions */}
       {phase === "RUNNING" && (
         <div className="flex items-center justify-end mb-2 gap-2">
-          <Button variant="ghost" disabled={!pending || isPlaying} onClick={skip}>Skip</Button>
-          <Button variant="secondary" disabled={!pending || isPlaying} onClick={giveUp}>Reveal answer</Button>
+          <Button variant="ghost" size="sm" disabled={!pending || isPlaying} onClick={skip}>Skip</Button>
+          <Button variant="secondary" size="sm" disabled={!pending || isPlaying} onClick={giveUp}>Reveal answer</Button>
         </div>
       )}
 
