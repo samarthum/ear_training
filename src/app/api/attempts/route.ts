@@ -6,6 +6,24 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/db/prisma";
 import { AttemptPostSchema } from "@/lib/validators/schemas";
 
+type IntervalHeatEntry = { seen: number; miss: number };
+type IntervalHeatMap = Record<string, IntervalHeatEntry>;
+
+function asIntervalHeatMap(json: unknown): IntervalHeatMap {
+  if (!json || typeof json !== "object") return {};
+  const obj = json as Record<string, unknown>;
+  const out: IntervalHeatMap = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value && typeof value === "object") {
+      const v = value as Record<string, unknown>;
+      const seen = typeof v.seen === "number" ? v.seen : 0;
+      const miss = typeof v.miss === "number" ? v.miss : 0;
+      out[key] = { seen, miss };
+    }
+  }
+  return out;
+}
+
 function toYMD(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -54,10 +72,10 @@ export async function POST(req: Request) {
       const existing = await tx.userStat.findUnique({ where: { userId } });
 
       // Prepare heat updates (intervals only for now)
-      let nextIntervalHeat: Record<string, { seen: number; miss: number }> | undefined = undefined;
+      let nextIntervalHeat: IntervalHeatMap | undefined = undefined;
       if (prompt.kind === "INTERVAL") {
         const key = `${prompt.interval}-${prompt.direction}`; // e.g., "3m-asc"
-        const currentHeat = (existing?.intervalHeat as any) || {};
+        const currentHeat = asIntervalHeatMap(existing?.intervalHeat);
         const currentEntry = currentHeat[key] || { seen: 0, miss: 0 };
         nextIntervalHeat = {
           ...currentHeat,
