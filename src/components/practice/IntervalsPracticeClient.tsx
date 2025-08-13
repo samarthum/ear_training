@@ -236,6 +236,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       console.error("Failed to post attempt", err);
     }
 
+    const delayMs = correct ? 700 : 400;
     setTimeout(() => {
       setFeedback(null);
       setSelectedAnswer(null);
@@ -248,7 +249,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         setPhase("REVIEW");
         setPending(null);
       }
-    }, 1500);
+    }, delayMs);
   };
 
   const giveUp = async () => {
@@ -292,7 +293,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         setPhase("REVIEW");
         setPending(null);
       }
-    }, 2000);
+    }, 1200);
   };
 
   const replayAudio = async () => {
@@ -376,7 +377,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
         setPhase("REVIEW");
         setPending(null);
       }
-    }, 800);
+    }, 600);
   };
 
   const accuracy = completed > 0 ? Math.round((correctCount / completed) * 100) : 0;
