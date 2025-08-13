@@ -186,6 +186,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   };
 
   const accuracy = completed > 0 ? Math.round((correctCount / completed) * 100) : 0;
+  const currentQuestionNumber = phase === "RUNNING" ? Math.min(plannedQuestions, Math.max(1, completed + 1)) : 0;
 
   return (
     <PracticeInterface
@@ -284,11 +285,9 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
 
       {/* Running: progress and prompt controls */}
       {phase === "RUNNING" && (
-        <div className="space-y-4 mb-2">
-          <div className="flex items-center justify-between gap-4">
-            <div className="text-sm text-[color:var(--brand-muted)]">
-              {completed} / {plannedQuestions}
-            </div>
+        <div className="space-y-2 mb-2">
+          <div className="text-sm font-medium text-[color:var(--brand-muted)]">
+            Question {currentQuestionNumber} of {plannedQuestions}
           </div>
           <Progress value={plannedQuestions ? Math.min(100, Math.round((completed / plannedQuestions) * 100)) : 0} />
         </div>
