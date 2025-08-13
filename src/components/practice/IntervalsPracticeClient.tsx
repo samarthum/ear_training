@@ -471,11 +471,8 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                       {Array.from(DIRECTIONS).map((d) => {
                         const isSelected = directions.includes(d);
                         const label = d === "asc" ? "Ascending" : d === "desc" ? "Descending" : "Harmonic";
-                        const icon = d === "asc" ? 
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg> :
-                          d === "desc" ? 
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg> :
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>;
+                        // Simplify on mobile: no icons to avoid cramped layout
+                        const icon = null;
                         return (
                           <button
                             key={d}
@@ -489,15 +486,14 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                               }
                             }}
                             className={cn(
-                              "py-3 px-3 rounded-lg border-2 font-medium text-sm transition-all",
+                              "py-3 px-3 rounded-lg border-2 font-medium text-sm transition-all text-sm sm:text-base",
                               "hover:scale-105 active:scale-95",
                               isSelected
                                 ? "border-[color:var(--brand-accent)] bg-[color:var(--brand-accent)]/10 text-[color:var(--brand-accent)]"
                                 : "border-gray-200 dark:border-gray-700 text-[color:var(--brand-muted)] hover:border-[color:var(--brand-accent)]/50"
                             )}
                           >
-                            <div className="flex items-center gap-2">
-                              {icon}
+                            <div className="flex items-center justify-center gap-2">
                               {label}
                             </div>
                           </button>
