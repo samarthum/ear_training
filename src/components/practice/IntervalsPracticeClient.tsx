@@ -548,53 +548,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                     )}
                   </div>
                   
-                  {/* Audio preferences */}
-                  <div className="space-y-3">
-                    <label className="text-base font-semibold text-[color:var(--brand-text)] flex items-center gap-2">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                      </svg>
-                      Audio Settings
-                    </label>
-                    
-                    {/* Volume */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-[color:var(--brand-text)]">Volume</span>
-                        <span className="text-sm text-[color:var(--brand-muted)]">{volume}%</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="100" 
-                        value={volume} 
-                        onChange={(e) => setVolume(Number(e.target.value))}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-                      />
-                    </div>
-                    
-                    {/* Instrument */}
-                    <div className="space-y-2">
-                      <span className="text-sm text-[color:var(--brand-text)]">Instrument</span>
-                      <div className="grid grid-cols-2 sm:flex gap-2">
-                        {["sine", "piano"].map((instr) => (
-                          <button
-                            key={instr}
-                            onClick={() => setInstrument(instr as "piano" | "sine")}
-                            className={cn(
-                              "flex-1 py-2 px-4 rounded-lg border-2 font-medium text-sm transition-all capitalize",
-                              "hover:scale-105 active:scale-95",
-                              instrument === instr
-                                ? "border-[color:var(--brand-accent)] bg-[color:var(--brand-accent)]/10 text-[color:var(--brand-accent)]"
-                                : "border-gray-200 dark:border-gray-700 text-[color:var(--brand-muted)] hover:border-[color:var(--brand-accent)]/50"
-                            )}
-                          >
-                            {instr}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  {/* Audio preferences: temporarily removed for a simpler settings UI */}
                 </div>
               </DialogContent>
             </Dialog>
