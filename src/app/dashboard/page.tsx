@@ -1,15 +1,60 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { AppLayout } from "@/components/app/AppLayout";
 import { PracticeCard } from "@/components/app/PracticeCard";
 import { StatsCard } from "@/components/app/StatsCard";
 import { getUserStats } from "@/lib/stats";
+import { Skeleton } from "@/components/ui/skeleton";
+
+async function StatsSection({ userId }: { userId: string }) {
+  const stats = await getUserStats(userId);
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <StatsCard 
+        title="Total Attempts"
+        value={stats.totals.totalAttempts}
+        subtitle="All-time across drills"
+        icon="🎯"
+      />
+      <StatsCard 
+        title="Accuracy"
+        value={`${stats.totals.accuracy}%`}
+        subtitle={`${stats.totals.correctAttempts} correct`}
+        icon="📈"
+      />
+      <StatsCard 
+        title="Current Streak" 
+        value={`${stats.totals.streakDays} day${stats.totals.streakDays === 1 ? '' : 's'}`}
+        subtitle="Based on daily activity"
+        icon="🔥"
+      />
+    </div>
+  );
+}
+
+function StatsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {[0,1,2].map((i) => (
+        <div key={i} className="rounded-xl p-6 border border-[color:var(--brand-line)] bg-[color:var(--brand-panel)]">
+          <div className="flex items-center justify-between mb-3">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-5 w-5 rounded-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-7 w-24" />
+            <Skeleton className="h-3 w-36" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/sign-in");
-
-  const stats = await getUserStats(session.user.id as string);
 
   return (
     <AppLayout>
@@ -24,27 +69,10 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        {/* Stats overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatsCard 
-            title="Total Attempts"
-            value={stats.totals.totalAttempts}
-            subtitle="All-time across drills"
-            icon="🎯"
-          />
-          <StatsCard 
-            title="Accuracy"
-            value={`${stats.totals.accuracy}%`}
-            subtitle={`${stats.totals.correctAttempts} correct`}
-            icon="📈"
-          />
-          <StatsCard 
-            title="Current Streak" 
-            value={`${stats.totals.streakDays} day${stats.totals.streakDays === 1 ? '' : 's'}`}
-            subtitle="Based on daily activity"
-            icon="🔥"
-          />
-        </div>
+        {/* Stats overview with skeleton */}
+        <Suspense fallback={<StatsSkeleton />}>
+          <StatsSection userId={session.user.id as string} />
+        </Suspense>
 
         {/* Practice options */}
         <div className="space-y-4">
