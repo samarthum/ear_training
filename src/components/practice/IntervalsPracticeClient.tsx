@@ -1,12 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { ensureAudioReady, playContext, playInterval, cleanupAudio } from "@/lib/audio/transport";
-import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval, type IntervalLabel } from "@/lib/theory/intervals";
+import { buildIntervalPrompt, INTERVAL_CHOICES, isCorrectInterval, KEYS, DIRECTIONS, type IntervalLabel } from "@/lib/theory/intervals";
 import type { IntervalPrompt } from "@/types/drills";
 import { PracticeInterface } from "@/components/app/PracticeInterface";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function IntervalsPracticeClient({ drillId }: { drillId: string }) {
   const [audioReady, setAudioReady] = useState(false);
@@ -23,6 +25,12 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   const [completed, setCompleted] = useState<number>(0);
   const [correctCount, setCorrectCount] = useState<number>(0);
   const sessionDone = plannedQuestions > 0 && completed >= plannedQuestions;
+
+  // Settings (Idle only editable)
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [keyMode, setKeyMode] = useState<"random" | "fixed">("random");
+  const [fixedKey, setFixedKey] = useState<string>("C");
+  const [directions, setDirections] = useState<string[]>(["asc", "desc", "harm"]);
 
   useEffect(() => {
     return () => {
@@ -60,7 +68,11 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
   };
 
   const nextPrompt = async () => {
-    const p = buildIntervalPrompt();
+    const p = buildIntervalPrompt({
+      keyMode,
+      fixedKey,
+      directions: directions as any,
+    });
     setPending(p);
     setIsPlaying(true);
 
@@ -190,22 +202,82 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       {/* Idle: settings only */}
       {phase === "IDLE" && (
         <div className="space-y-4 mb-2">
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-[color:var(--brand-muted)]">Session length</span>
-            <Select
-              value={String(plannedQuestions)}
-              onValueChange={(v) => setPlannedQuestions(Number(v))}
-              disabled={phase !== "IDLE"}
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-[color:var(--brand-muted)]">Ready? Adjust settings, then start.</div>
+            <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+              <DialogTrigger asChild>
+                <Button variant="secondary">Settings</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Practice settings</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6">
+                  {/* Session length */}
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium">Session length</div>
+                    <Select
+                      value={String(plannedQuestions)}
+                      onValueChange={(v) => setPlannedQuestions(Number(v))}
+                    >
+                      <SelectTrigger className="w-[160px]">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Directions */}
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium">Directions</div>
+                    <ToggleGroup
+                      type="multiple"
+                      value={directions}
+                      onValueChange={(vals) => setDirections(vals)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {Array.from(DIRECTIONS).map((d) => (
+                        <ToggleGroupItem key={d} value={d} aria-label={d}>
+                          {d === "asc" ? "Ascending" : d === "desc" ? "Descending" : "Harmonic"}
+                        </ToggleGroupItem>
+                      ))}
+                    </ToggleGroup>
+                  </div>
+
+                  {/* Key mode */}
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium">Key</div>
+                    <ToggleGroup
+                      type="single"
+                      value={keyMode}
+                      onValueChange={(v) => setKeyMode((v as any) || "random")}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <ToggleGroupItem value="random">Random</ToggleGroupItem>
+                      <ToggleGroupItem value="fixed">Fixed</ToggleGroupItem>
+                    </ToggleGroup>
+                    {keyMode === "fixed" && (
+                      <Select value={fixedKey} onValueChange={setFixedKey}>
+                        <SelectTrigger className="w-[160px] mt-2">
+                          <SelectValue placeholder="Key" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from(KEYS).map((k) => (
+                            <SelectItem key={k} value={k}>{k}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       )}

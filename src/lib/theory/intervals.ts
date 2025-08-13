@@ -1,4 +1,4 @@
-import type { IntervalPrompt } from "@/types/drills";
+import type { IntervalPrompt, IntervalDirection } from "@/types/drills";
 
 const INTERVALS = [
   "m2",
@@ -15,7 +15,7 @@ const INTERVALS = [
   "P8",
 ] as const;
 
-const DIRECTIONS = ["asc", "desc", "harm"] as const;
+export const DIRECTIONS = ["asc", "desc", "harm"] as const;
 
 export type IntervalLabel = (typeof INTERVALS)[number];
 
@@ -34,12 +34,23 @@ const intervalToTonal: Record<IntervalLabel, string> = {
   P8: "8P",
 };
 
-const KEYS = ["C", "D", "E", "F", "G", "A", "B"] as const;
+export const KEYS = ["C", "D", "E", "F", "G", "A", "B"] as const;
 
-export function buildIntervalPrompt(key?: string): IntervalPrompt {
-  const selectedKey = key || KEYS[Math.floor(Math.random() * KEYS.length)];
+export type BuildIntervalPromptOptions = {
+  keyMode?: "random" | "fixed";
+  fixedKey?: string;
+  directions?: IntervalDirection[];
+};
+
+export function buildIntervalPrompt(options?: BuildIntervalPromptOptions): IntervalPrompt {
+  const allowedDirections = options?.directions && options.directions.length > 0 ? options.directions : (DIRECTIONS as unknown as IntervalDirection[]);
+  const selectedDirection = allowedDirections[Math.floor(Math.random() * allowedDirections.length)] as IntervalDirection;
+
+  const selectedKey = options?.keyMode === "fixed" && options.fixedKey
+    ? options.fixedKey
+    : KEYS[Math.floor(Math.random() * KEYS.length)];
   const label = INTERVALS[Math.floor(Math.random() * INTERVALS.length)];
-  const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
+  const direction = selectedDirection;
   
   return {
     kind: "INTERVAL",
