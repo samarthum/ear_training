@@ -45,37 +45,39 @@ export function PracticeInterface({
       </div>
 
       {/* Practice Panel - Auto-sized container at top */}
-      <div className="flex-1 flex flex-col items-center p-4 min-h-0">
+      <div className="flex-1 flex flex-col items-center p-3 min-h-0">
         <div 
           className={cn(
-            "rounded-lg border border-[color:var(--brand-line)] p-6 max-w-2xl w-full",
+            "rounded-lg border border-[color:var(--brand-line)] p-4 max-w-2xl w-full",
             "bg-[color:var(--brand-panel)] backdrop-blur-sm",
             "shadow-[var(--brand-shadow)] flex flex-col",
           )}
         >
-          {/* Audio Controls - Compact */}
+          {/* Audio Controls - Prominent Start Button */}
           {!hasStarted && (
-            <div className="text-center mb-4">
+            <div className="text-center mb-6">
               <Button
                 onClick={onStart}
                 disabled={isPlaying || isLoading}
                 variant="brandPrimary"
                 size="lg"
-                shape="pill"
-                className="min-w-[140px] h-10"
+                className="min-w-[200px] h-14 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 !bg-blue-600 hover:!bg-blue-700 !text-white !border-0"
               >
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
                 {isLoading
                   ? "Loading..."
                   : isPlaying
                   ? "Playing..."
-                  : "Start session"}
+                  : "Start Practice"}
               </Button>
             </div>
           )}
             
           {feedback && (
             <div className="text-center mb-4">
-              <div role="status" aria-live="polite" className={cn(
+              <div role="status" aria-live="assertive" aria-atomic="true" className={cn(
                 "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium animate-in slide-in-from-top duration-300",
                 feedback.startsWith("✅") 
                   ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300"
