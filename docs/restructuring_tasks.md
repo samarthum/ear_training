@@ -22,7 +22,7 @@ Use this as a living checklist while implementing the dashboard/practice restruc
 ### Milestone 3 — Stats Service (Timeframe Support)
 - [x] Update `getUserStats(userId)` → `getUserStats(userId, range: '7d' | '30d' | 'all' = '7d')`.
 - [x] Implement date-range filtering for attempts to compute totals for 7d/30d/all.
-- [ ] Return `range` metadata in the response and ensure accuracy/streak semantics remain correct.
+ - [x] Return `range` metadata in the response and ensure accuracy/streak semantics remain correct.
 - [x] Update API at `src/app/api/stats/route.ts` to accept `?range=7d|30d|all` and pass to service.
 
 ### Milestone 4 — Dashboard Simplification

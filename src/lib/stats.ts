@@ -28,6 +28,7 @@ function asHeatMap(json: unknown): HeatMap {
 export type StatsRange = "7d" | "30d" | "all";
 
 export interface UserStats {
+  range?: StatsRange;
   totals: {
     totalAttempts: number;
     correctAttempts: number;
@@ -106,6 +107,7 @@ export async function getUserStats(userId: string, range: StatsRange = "7d"): Pr
   const accuracy = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0;
 
   return {
+    range,
     totals: { totalAttempts, correctAttempts, accuracy, streakDays },
     intervalHeat,
     chordHeat,
