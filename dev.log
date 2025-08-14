@@ -693,3 +693,34 @@ prisma:error Error in PostgreSQL connection: Error { kind: Closed, cause: None }
  ✓ Compiled in 138ms (406 modules)
  GET / 200 in 261ms
  ✓ Compiled in 524ms (406 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/samarth/Desktop/Work/code/ear_training/.next/server/edge-runtime-webpack.js']
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 672ms (1142 modules)
+ ⨯ [Error: Cannot find module '/Users/samarth/Desktop/Work/code/ear_training/.next/server/pages/_document.js'
+Require stack:
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/server/require.js
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/server/load-components.js
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/build/utils.js
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/build/swc/options.js
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/build/swc/index.js
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/server/config.js
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/server/next.js
+- /Users/samarth/Desktop/Work/code/ear_training/node_modules/next/dist/server/lib/start-server.js] {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /dashboard 404 in 0ms
+ ✓ Compiled /_not-found in 271ms (1147 modules)
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 569ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 567ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 570ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 567ms
+ GET /_next/static/chunks/fallback/main.js 404 in 569ms
+ ✓ Compiled in 810ms (406 modules)
+ ✓ Compiled in 389ms (406 modules)
+ ✓ Compiled in 268ms (406 modules)
+ ✓ Compiled in 886ms (406 modules)
+ ✓ Compiled in 367ms (406 modules)
+ ✓ Compiled in 253ms (406 modules)
+ ✓ Compiled in 146ms (406 modules)

@@ -149,9 +149,10 @@ Tasks
   - Per‑session weight map; increase on miss; decay/clear after N correct or session end
   - Weighted choice sampler integrated with prompt builders
 - Stats API `app/api/stats/route.ts` (GET)
-  - Returns `{ totals, intervalHeat, chordHeat, last7 }`
-- Dashboard widgets `components/StatsSummary.tsx`
-  - Accuracy %, streak days, last 7 days chart
+  - Returns `{ range, totals, intervalHeat, chordHeat, last7 }` and supports `?range=7d|30d|all` — DONE
+- Dashboard widgets
+  - Mobile KPI chips for Attempts/Accuracy/Streak with timeframe toggle — DONE
+  - `components/StatsSummary.tsx` (accuracy %, last 7 days chart) — TODO
 - Samples (optional)
   - `lib/audio/samples.ts` mapping; lazy‑load; fallback to synth if not ready
 
@@ -177,8 +178,11 @@ Acceptance Criteria
   /(marketing)/page.tsx
   /sign-in/page.tsx
   /dashboard/page.tsx
+  /practice/page.tsx
   /practice/intervals/page.tsx
+  /practice/intervals/identify/page.tsx
   /practice/chords/page.tsx
+  /practice/rhythm/page.tsx
 
 /auth.ts
 /middleware.ts
@@ -236,7 +240,17 @@ Acceptance Criteria
 - `POST /api/otp/request` → `{ ok: true }` (always) — never disclose existence
 - `POST /api/otp/verify` → `{ ok: true }` and sets session
 - `POST /api/attempts` → `{ id, isCorrect, totals: { totalAttempts, correctAttempts, streakDays } }`
-- `GET /api/stats` → `{ totals, intervalHeat, chordHeat, last7 }`
+- `GET /api/stats?range=7d|30d|all` → `{ range, totals, intervalHeat, chordHeat, last7 }`
+
+### Restructure Notes (Completed)
+
+- New `/practice` landing with categories: Intervals (enabled), Chords (disabled), Rhythm (disabled).
+- Intervals subtype selection: Identification (enabled), Comparison (disabled), Singing (disabled).
+- Working interval drill moved to `/practice/intervals/identify`.
+- `/practice/progressions` now redirects to `/practice/chords` where progressions live as a subtype.
+- Dashboard simplified (mobile KPI chips + timeframe toggle, desktop cards with lucide icons). Primary CTA points to `/practice`.
+- Header nav simplified to `Dashboard` and `Practice`.
+- A11y: disabled practice tiles are non-focusable and use `aria-disabled`; icons marked `aria-hidden`; KPI chips have descriptive labels.
 - Validate request bodies with Zod (`lib/validators/schemas.ts`)
 
 ### Audio Engine (Tone.js)

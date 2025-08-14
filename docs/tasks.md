@@ -110,8 +110,9 @@ Execution rules
 - [x] `/(marketing)/page.tsx` — landing page implemented with design tokens and marketing components
   - [x] Navbar, Hero, Features, Demo (no audio runtime), How‑it‑works, Preview, Pricing, WaitlistForm, FAQ, Footer
   - [x] Minimal client JS (Reveal + waitlist localStorage), a11y landmarks/aria labels
-- [x] `/dashboard/page.tsx` shell
-  - [ ] Shows placeholders for accuracy, streak, last 7 days, links to drills
+- [x] `/dashboard/page.tsx` updated
+  - [x] Mobile KPI chips (Attempts/Accuracy/Streak) with timeframe toggle (7d/30d/All)
+  - [x] Primary CTA to `/practice`; sticky mobile CTA; desktop cards use lucide icons
 - [x] Root layout includes Tailwind CSS
   - [x] Fixed `/sign-in` 500 by removing `useSession` and relying on middleware redirects
   - [x] Adopted server page + client child pattern for practice pages; guarded `AppHeader` with `server-only` to prevent client import
@@ -250,17 +251,21 @@ Execution rules
 
 ---
 
-### 14) Stats API + Dashboard Widgets
+### 14) Stats API + Dashboard Widgets ✅ PARTIALLY DONE
 - [x] `app/api/stats/route.ts` (GET)
   - [x] Auth guard
-  - [x] Return `{ totals, intervalHeat, chordHeat, last7, sessions }`
+  - [x] Return `{ range, totals, intervalHeat, chordHeat, last7 }` with `?range=7d|30d|all`
     - [x] `totals`: `{ totalAttempts, correctAttempts, accuracy, streakDays }`
-    - [ ] `sessions`: `{ totalSessions, last7Sessions? }` (if PracticeSession enabled; else derive coarse estimate or omit)
     - [x] `intervalHeat`: flattened keys `${interval}-${direction}`; also return a top misses list: `topMissedIntervals`
   - [x] Compute `last7` with day buckets from `Attempt`
-- [ ] `components/StatsSummary.tsx` (accuracy %, streak, last 7 days)
+- [ ] `components/StatsSummary.tsx` (accuracy %, last 7 days)
   - [ ] Tiny report: "Where you struggle" (top 3 by miss rate) for intervals (by interval+direction)
   - [x] Wire `/dashboard/page.tsx` to API and render widgets
+
+### 5.5) Practice Restructure ✅ COMPLETED
+- [x] New `/practice` landing with Intervals (enabled), Chords (disabled), Rhythm (disabled)
+- [x] Intervals subtype selector; working drill moved to `/practice/intervals/identify`
+- [x] Redirect `/practice/progressions` → `/practice/chords`
 
 ---
 
