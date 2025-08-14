@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { AppLayout } from "@/components/app/AppLayout";
 import { StatsCard } from "@/components/app/StatsCard";
+import { StatsCardsClient } from "@/components/app/StatsCardsClient";
 import { getUserStats } from "@/lib/stats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { KpiChip } from "@/components/app/KpiChip";
@@ -93,19 +94,11 @@ export default async function DashboardPage() {
           <StatsChipsClient />
         </div>
         <div className="hidden md:block">
-          <Suspense fallback={<StatsSkeleton />}>
-            <StatsSection userId={session.user.id as string} />
-          </Suspense>
+          {/* Desktop view: interactive timeframe selector with cards */}
+          <StatsCardsClient />
         </div>
 
-        {/* Sticky bottom primary CTA for mobile */}
-        <div className="md:hidden fixed bottom-4 inset-x-0 flex justify-center pointer-events-none">
-          <div className="pointer-events-auto">
-            <Button variant="brand" size="lg" asChild>
-              <Link href="/practice">Start practice</Link>
-            </Button>
-          </div>
-        </div>
+        {/* Sticky bottom primary CTA removed for cleaner mobile layout */}
       </div>
     </AppLayout>
   );

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { KpiChip } from "@/components/app/KpiChip";
+import { StatsCard } from "@/components/app/StatsCard";
 import { TimeframeToggle } from "@/components/app/TimeframeToggle";
 import { Target, TrendingUp, Flame } from "lucide-react";
 
@@ -13,7 +13,7 @@ type Totals = {
   streakDays: number;
 };
 
-export function StatsChipsClient() {
+export function StatsCardsClient() {
   const [range, setRange] = React.useState<Range>("7d");
   const [totals, setTotals] = React.useState<Totals | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -34,7 +34,6 @@ export function StatsChipsClient() {
   }, []);
 
   React.useEffect(() => {
-    // Initialize from URL param or localStorage
     try {
       const url = new URL(window.location.href);
       const p = url.searchParams.get("range") as Range | null;
@@ -48,7 +47,7 @@ export function StatsChipsClient() {
     } catch {
       // ignore
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -63,26 +62,37 @@ export function StatsChipsClient() {
     }
   }, [range, load]);
 
+  const attemptsValue = loading || !totals ? "—" : totals.totalAttempts;
+  const accuracyValue = loading || !totals ? "—" : `${totals.accuracy}%`;
+  const streakValue = loading || !totals ? "—" : `${totals.streakDays} day${totals.streakDays === 1 ? "" : "s"}`;
+  const accuracySubtitle = loading || !totals ? undefined : `${totals.correctAttempts} correct`;
+  const attemptsSubtitle = range === "all" ? "All-time across drills" : "Across drills";
+
   return (
     <div className="space-y-4">
-      <div className="flex w-full items-center justify-center">
+      <div className="flex items-center justify-end">
         <TimeframeToggle value={range} onChange={setRange} />
       </div>
 
-      <div className="flex flex-col items-center gap-3">
-        {loading || !totals ? (
-          <>
-            <KpiChip icon={<Target size={16} />} label="Attempts" value={"—"} ariaLabel={`Attempts over ${range}`} />
-            <KpiChip icon={<TrendingUp size={16} />} label="Accuracy" value={"—"} ariaLabel={`Accuracy over ${range}`} />
-            <KpiChip icon={<Flame size={16} />} label="Streak" value={"—"} ariaLabel={`Current streak`} />
-          </>
-        ) : (
-          <>
-            <KpiChip icon={<Target size={16} />} label="Attempts" value={totals.totalAttempts} ariaLabel={`Attempts over ${range}: ${totals.totalAttempts}`} />
-            <KpiChip icon={<TrendingUp size={16} />} label="Accuracy" value={`${totals.accuracy}%`} ariaLabel={`Accuracy over ${range}: ${totals.accuracy} percent`} />
-            <KpiChip icon={<Flame size={16} />} label="Streak" value={`${totals.streakDays}d`} ariaLabel={`Current streak: ${totals.streakDays} days`} />
-          </>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatsCard
+          title="Total Attempts"
+          value={attemptsValue}
+          subtitle={attemptsSubtitle}
+          icon={<Target size={18} />}
+        />
+        <StatsCard
+          title="Accuracy"
+          value={accuracyValue}
+          subtitle={accuracySubtitle}
+          icon={<TrendingUp size={18} />}
+        />
+        <StatsCard
+          title="Current Streak"
+          value={streakValue}
+          subtitle={"Based on daily activity"}
+          icon={<Flame size={18} />}
+        />
       </div>
     </div>
   );
