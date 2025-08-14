@@ -60,19 +60,29 @@ export default async function DashboardPage() {
     <AppLayout>
       <div className="space-y-8">
         {/* Welcome section */}
-        <div className="text-center space-y-3">
-          <h1 className="text-4xl font-bold text-[color:var(--brand-text)] tracking-tight">
-            Welcome back{session.user.name ? `, ${session.user.name}` : ''}
+        <div className="text-center space-y-2 md:space-y-3">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[color:var(--brand-text)] tracking-tight">
+            Welcome back{session.user.name ? `, ${session.user.name.split(' ')[0]}` : ''}
           </h1>
-          <p className="text-lg text-[color:var(--brand-muted)] max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-[color:var(--brand-muted)] max-w-2xl mx-auto">
             Continue your ear training journey with interval recognition, chord identification, and progression analysis.
           </p>
         </div>
 
         {/* Stats overview with skeleton */}
-        <Suspense fallback={<StatsSkeleton />}>
-          <StatsSection userId={session.user.id as string} />
-        </Suspense>
+        <div className="md:hidden">
+          <div className="grid grid-cols-3 gap-2">
+            <Suspense fallback={<StatsSkeleton />}> 
+              {/* Compact mobile: reuse StatsSection but CSS shrinks via StatsCard */}
+              <StatsSection userId={session.user.id as string} />
+            </Suspense>
+          </div>
+        </div>
+        <div className="hidden md:block">
+          <Suspense fallback={<StatsSkeleton />}>
+            <StatsSection userId={session.user.id as string} />
+          </Suspense>
+        </div>
 
         {/* Practice options */}
         <div className="space-y-4">
