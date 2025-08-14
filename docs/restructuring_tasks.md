@@ -9,15 +9,15 @@ Use this as a living checklist while implementing the dashboard/practice restruc
 - [x] Convert `src/app/practice/intervals/page.tsx` into an Intervals subtype selector with three tiles: Identification (enabled → `/practice/intervals/identify`), Comparison (disabled), Singing (disabled).
 - [x] Replace `src/app/practice/chords/page.tsx` with a Chords subtype selector (Identification, Inversions, Progressions — all disabled for now).
 - [x] Add `src/app/practice/chords/identify/page.tsx`, `.../inversions/page.tsx`, `.../progressions/page.tsx` as disabled placeholders.
-- [ ] Add `src/app/practice/rhythm/page.tsx` as a placeholder (disabled or “Coming soon”).
+ - [x] Add `src/app/practice/rhythm/page.tsx` as a placeholder (disabled or “Coming soon”).
 - [x] Redirect `"/practice/progressions"` to `"/practice/chords"` (progressions nested under chords).
 
 ### Milestone 2 — Component Updates
-- [ ] Extend `PracticeCard` to accept `disabled?: boolean`, `icon: React.ReactNode`, and optional `kicker?: string`/`ctaLabel?: string`.
-- [ ] Ensure disabled cards are non-focusable (`tabIndex={-1}`) and announced as disabled for screen readers.
-- [ ] Replace emoji props with icon nodes across usages.
-- [ ] Create `KpiChip` (compact stat chip) component with props: `icon`, `label`, `value`, `ariaLabel`.
-- [ ] Create `TimeframeToggle` component with `value: '7d' | '30d' | 'all'` and `onChange` handler (URL param integration ready).
+- [x] Extend `PracticeCard` to accept `disabled?: boolean`, `icon: React.ReactNode`, and optional `kicker?: string`/`ctaLabel?: string`.
+- [x] Ensure disabled cards are non-focusable (`tabIndex={-1}`) and announced as disabled for screen readers.
+- [x] Replace emoji props with icon nodes across usages.
+- [x] Create `KpiChip` (compact stat chip) component with props: `icon`, `label`, `value`, `ariaLabel`.
+- [x] Create `TimeframeToggle` component with `value: '7d' | '30d' | 'all'` and `onChange` handler (URL param integration ready).
 
 ### Milestone 3 — Stats Service (Timeframe Support)
 - [x] Update `getUserStats(userId)` → `getUserStats(userId, range: '7d' | '30d' | 'all' = '7d')`.
@@ -26,16 +26,16 @@ Use this as a living checklist while implementing the dashboard/practice restruc
 - [x] Update API at `src/app/api/stats/route.ts` to accept `?range=7d|30d|all` and pass to service.
 
 ### Milestone 4 — Dashboard Simplification
-- [ ] Trim hero copy to 1–2 lines while keeping “Welcome back, {name}”.
-- [ ] Add primary CTA “Start practice” linking to `/practice` (top area).
-- [ ] Add sticky bottom CTA on small screens with the same action.
+- [x] Trim hero copy to 1–2 lines while keeping “Welcome back, {name}”.
+- [x] Add primary CTA “Start practice” linking to `/practice` (top area).
+- [x] Add sticky bottom CTA on small screens with the same action.
 - [x] Replace existing stat cards on mobile with a horizontally scrollable row of `KpiChip`s: Attempts, Accuracy, Streak.
 - [x] Add `TimeframeToggle` (7d/30d/All) controlling the chips and API query.
 - [ ] Swap emoji icons for lucide icons (`Target`, `TrendingUp`, `Flame`).
 
 ### Milestone 5 — Header / Navigation
 - [x] Update `AppHeader` primary nav to `Dashboard` and `Practice` (remove direct `Intervals/Chords/Progressions` links).
-- [ ] Keep Sign out as-is for now; confirm route works post-changes.
+- [x] Keep Sign out as-is for now; confirm route works post-changes.
 
 ### Milestone 6 — Accessibility & Visual Polish
 - [ ] Ensure all major actions have 44×44pt hit areas on mobile.

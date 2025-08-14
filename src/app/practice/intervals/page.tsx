@@ -19,21 +19,24 @@ export default function IntervalsSelectorPage() {
             title="Interval Identification"
             description="Hear an interval and identify it."
             href="/practice/intervals/identify"
-            icon="🎯"
+            icon={<span role="img" aria-label="target">🎯</span>}
+            ctaLabel="Start"
           />
           <PracticeCard
             title="Interval Comparison"
             description="Compare two intervals — coming soon."
             href="#"
-            icon="📈"
-            className="opacity-60 pointer-events-none"
+            icon={<span role="img" aria-label="trending up">📈</span>}
+            disabled
+            kicker="Soon"
           />
           <PracticeCard
             title="Interval Singing"
             description="Sing intervals to match — coming soon."
             href="#"
-            icon="🎤"
-            className="opacity-60 pointer-events-none"
+            icon={<span role="img" aria-label="microphone">🎤</span>}
+            disabled
+            kicker="Soon"
           />
         </div>
       </div>

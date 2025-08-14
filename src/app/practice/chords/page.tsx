@@ -19,22 +19,25 @@ export default function ChordsSelectorPage() {
             title="Chord Identification"
             description="Identify chord qualities in context — coming soon."
             href="#"
-            icon="🎹"
-            className="opacity-60 pointer-events-none"
+            icon={<span role="img" aria-label="piano">🎹</span>}
+            disabled
+            kicker="Soon"
           />
           <PracticeCard
             title="Chord Inversions"
             description="Recognize chord inversions — coming soon."
             href="#"
-            icon="🔁"
-            className="opacity-60 pointer-events-none"
+            icon={<span role="img" aria-label="repeat">🔁</span>}
+            disabled
+            kicker="Soon"
           />
           <PracticeCard
             title="Chord Progressions"
             description="Identify common progressions — coming soon."
             href="#"
-            icon="🎼"
-            className="opacity-60 pointer-events-none"
+            icon={<span role="img" aria-label="score">🎼</span>}
+            disabled
+            kicker="Soon"
           />
         </div>
       </div>
