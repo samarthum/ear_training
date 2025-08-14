@@ -5,7 +5,7 @@ interface StatsCardProps {
   title: string
   value: string | number
   subtitle?: string
-  icon?: string
+  icon?: React.ReactNode
   className?: string
 }
 
@@ -28,7 +28,7 @@ export function StatsCard({
           {title}
         </h3>
         {icon && (
-          <div className="text-xl opacity-60">
+          <div className="text-xl opacity-60" aria-hidden>
             {icon}
           </div>
         )}

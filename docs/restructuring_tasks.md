@@ -31,7 +31,7 @@ Use this as a living checklist while implementing the dashboard/practice restruc
 - [x] Add sticky bottom CTA on small screens with the same action.
 - [x] Replace existing stat cards on mobile with a horizontally scrollable row of `KpiChip`s: Attempts, Accuracy, Streak.
 - [x] Add `TimeframeToggle` (7d/30d/All) controlling the chips and API query.
-- [ ] Swap emoji icons for lucide icons (`Target`, `TrendingUp`, `Flame`).
+- [x] Swap emoji icons for lucide icons (`Target`, `TrendingUp`, `Flame`).
 
 ### Milestone 5 — Header / Navigation
 - [x] Update `AppHeader` primary nav to `Dashboard` and `Practice` (remove direct `Intervals/Chords/Progressions` links).

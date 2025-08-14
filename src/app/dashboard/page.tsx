@@ -29,19 +29,19 @@ async function StatsSection({ userId, compact = false }: { userId: string; compa
         title="Total Attempts"
         value={stats.totals.totalAttempts}
         subtitle={"All-time across drills"}
-        icon="🎯"
+        icon={<Target size={18} /> as unknown as string}
       />
       <StatsCard 
         title="Accuracy"
         value={`${stats.totals.accuracy}%`}
         subtitle={`${stats.totals.correctAttempts} correct`}
-        icon="📈"
+        icon={<TrendingUp size={18} /> as unknown as string}
       />
       <StatsCard 
         title="Current Streak" 
         value={`${stats.totals.streakDays} day${stats.totals.streakDays === 1 ? '' : 's'}`}
         subtitle={"Based on daily activity"}
-        icon="🔥"
+        icon={<Flame size={18} /> as unknown as string}
       />
     </div>
   );
