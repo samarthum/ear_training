@@ -1,6 +1,7 @@
 "use client"
 import * as React from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -23,6 +24,12 @@ function getInitials(name?: string | null, email?: string | null) {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
+  const pathname = usePathname()
+  const isDashboard = pathname === "/" || pathname?.startsWith("/dashboard")
+  const isPractice = pathname?.startsWith("/practice")
+  const itemBase = "w-full rounded-md px-2 py-1.5 text-sm"
+  const active = "bg-[color:rgba(14,165,165,0.07)] text-[color:var(--brand-text)] font-medium"
+  const inactive = "text-[color:var(--brand-text)]"
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-full outline-none focus:ring-2 focus:ring-[color:var(--brand-accent)]">
@@ -45,10 +52,22 @@ export function UserMenu({ user }: UserMenuProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/dashboard" className="w-full">Dashboard</Link>
+          <Link
+            href="/dashboard"
+            className={`${itemBase} ${isDashboard ? active : inactive}`}
+            aria-current={isDashboard ? "page" : undefined}
+          >
+            Dashboard
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/practice" className="w-full">Practice</Link>
+          <Link
+            href="/practice"
+            className={`${itemBase} ${isPractice ? active : inactive}`}
+            aria-current={isPractice ? "page" : undefined}
+          >
+            Practice
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
