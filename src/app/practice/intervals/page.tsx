@@ -1,29 +1,42 @@
 import { AppLayout } from "@/components/app/AppLayout";
-import IntervalsPracticeClient from "@/components/practice/IntervalsPracticeClient";
-import { prisma } from "@/lib/db/prisma";
+import { PracticeCard } from "@/components/app/PracticeCard";
 
-export default async function IntervalsPracticePage() {
-  const existing = await prisma.drill.findFirst({
-    where: { type: "INTERVAL", name: "Intervals" },
-    select: { id: true },
-  });
-
-  let drillId = existing?.id;
-  if (!drillId) {
-    const created = await prisma.drill.create({
-      data: {
-        type: "INTERVAL",
-        name: "Intervals",
-        config: { mode: "major" },
-      },
-      select: { id: true },
-    });
-    drillId = created.id;
-  }
-
+export default function IntervalsSelectorPage() {
   return (
     <AppLayout>
-      <IntervalsPracticeClient drillId={drillId} />
+      <div className="space-y-6">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[color:var(--brand-text)]">
+            Intervals
+          </h1>
+          <p className="text-sm sm:text-base text-[color:var(--brand-muted)]">
+            Choose a practice type. Identification is available now; others are coming soon.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <PracticeCard
+            title="Interval Identification"
+            description="Hear an interval and identify it."
+            href="/practice/intervals/identify"
+            icon="🎯"
+          />
+          <PracticeCard
+            title="Interval Comparison"
+            description="Compare two intervals — coming soon."
+            href="#"
+            icon="📈"
+            className="opacity-60 pointer-events-none"
+          />
+          <PracticeCard
+            title="Interval Singing"
+            description="Sing intervals to match — coming soon."
+            href="#"
+            icon="🎤"
+            className="opacity-60 pointer-events-none"
+          />
+        </div>
+      </div>
     </AppLayout>
   );
 }
