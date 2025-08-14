@@ -3,14 +3,14 @@
 Use this as a living checklist while implementing the dashboard/practice restructure. Tick items as you complete them.
 
 ### Milestone 1 — Information Architecture & Routing
-- [ ] Create `src/app/practice/page.tsx` with three category tiles: Intervals (enabled), Chords (disabled), Rhythm (disabled).
+- [x] Create `src/app/practice/page.tsx` with three category tiles: Intervals (enabled), Chords (disabled), Rhythm (disabled).
 - [ ] Add proper disabled visuals and `aria-disabled` semantics for disabled tiles; prevent navigation when disabled.
-- [ ] Move current Intervals drill implementation to `src/app/practice/intervals/identify/page.tsx` (uses existing `IntervalsPracticeClient`).
-- [ ] Convert `src/app/practice/intervals/page.tsx` into an Intervals subtype selector with three tiles: Identification (enabled → `/practice/intervals/identify`), Comparison (disabled), Singing (disabled).
-- [ ] Replace `src/app/practice/chords/page.tsx` with a Chords subtype selector (Identification, Inversions, Progressions — all disabled for now).
-- [ ] Add `src/app/practice/chords/identify/page.tsx`, `.../inversions/page.tsx`, `.../progressions/page.tsx` as disabled placeholders.
+- [x] Move current Intervals drill implementation to `src/app/practice/intervals/identify/page.tsx` (uses existing `IntervalsPracticeClient`).
+- [x] Convert `src/app/practice/intervals/page.tsx` into an Intervals subtype selector with three tiles: Identification (enabled → `/practice/intervals/identify`), Comparison (disabled), Singing (disabled).
+- [x] Replace `src/app/practice/chords/page.tsx` with a Chords subtype selector (Identification, Inversions, Progressions — all disabled for now).
+- [x] Add `src/app/practice/chords/identify/page.tsx`, `.../inversions/page.tsx`, `.../progressions/page.tsx` as disabled placeholders.
 - [ ] Add `src/app/practice/rhythm/page.tsx` as a placeholder (disabled or “Coming soon”).
-- [ ] Redirect `"/practice/progressions"` to `"/practice/chords"` (progressions nested under chords).
+- [x] Redirect `"/practice/progressions"` to `"/practice/chords"` (progressions nested under chords).
 
 ### Milestone 2 — Component Updates
 - [ ] Extend `PracticeCard` to accept `disabled?: boolean`, `icon: React.ReactNode`, and optional `kicker?: string`/`ctaLabel?: string`.
@@ -34,7 +34,7 @@ Use this as a living checklist while implementing the dashboard/practice restruc
 - [ ] Swap emoji icons for lucide icons (`Target`, `TrendingUp`, `Flame`).
 
 ### Milestone 5 — Header / Navigation
-- [ ] Update `AppHeader` primary nav to `Dashboard` and `Practice` (remove direct `Intervals/Chords/Progressions` links).
+- [x] Update `AppHeader` primary nav to `Dashboard` and `Practice` (remove direct `Intervals/Chords/Progressions` links).
 - [ ] Keep Sign out as-is for now; confirm route works post-changes.
 
 ### Milestone 6 — Accessibility & Visual Polish

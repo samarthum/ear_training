@@ -640,3 +640,6 @@ prisma:error Error in PostgreSQL connection: Error { kind: Closed, cause: None }
  ✓ Compiled in 87ms (406 modules)
  ✓ Compiled in 153ms (1311 modules)
  ✓ Compiled in 144ms (406 modules)
+ ✓ Compiled in 600ms (1070 modules)
+ ✓ Compiled in 234ms (406 modules)
+ ✓ Compiled in 185ms (406 modules)

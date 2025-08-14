@@ -39,21 +39,9 @@ export async function AppHeader({ className }: AppHeaderProps) {
           </Link>
           <Link 
             className="rounded-xl px-2.5 py-1.5 hover:bg-[color:rgba(14,165,165,0.07)] hover:text-[color:var(--brand-text)] transition-colors" 
-            href="/practice/intervals"
+            href="/practice"
           >
-            Intervals
-          </Link>
-          <Link 
-            className="rounded-xl px-2.5 py-1.5 hover:bg-[color:rgba(14,165,165,0.07)] hover:text-[color:var(--brand-text)] transition-colors" 
-            href="/practice/chords"
-          >
-            Chords
-          </Link>
-          <Link 
-            className="rounded-xl px-2.5 py-1.5 hover:bg-[color:rgba(14,165,165,0.07)] hover:text-[color:var(--brand-text)] transition-colors" 
-            href="/practice/progressions"
-          >
-            Progressions
+            Practice
           </Link>
         </nav>
 
