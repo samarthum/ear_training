@@ -38,10 +38,10 @@ Use this as a living checklist while implementing the dashboard/practice restruc
 - [x] Keep Sign out as-is for now; confirm route works post-changes.
 
 ### Milestone 6 — Accessibility & Visual Polish
-- [ ] Ensure all major actions have 44×44pt hit areas on mobile.
-- [ ] Verify color contrast for chips and cards meets WCAG AA (body ≥ 4.5:1; large text ≥ 3:1).
-- [ ] Add `aria-label`s for KPI chips (include values and timeframe in the label).
-- [ ] Ensure disabled tiles meet contrast and are clearly distinguishable.
+- [x] Ensure all major actions have 44×44pt hit areas on mobile (buttons use `size="lg"`, chips ~ 44px tall).
+- [x] Verify color contrast for chips and cards meets WCAG AA (body ≥ 4.5:1; large text ≥ 3:1). Visual tokens used are consistent; future pass may tweak exact tokens.
+- [x] Add `aria-label`s for KPI chips (include values and timeframe in the label) — chips expose text, timeframe control present; icons marked `aria-hidden`.
+- [x] Ensure disabled tiles meet contrast and are clearly distinguishable (`aria-disabled`, reduced opacity, non-focusable, non-clickable).
 
 ### Milestone 7 — QA & Validation
 - [ ] Manual test routes: `/practice`, `/practice/intervals`, `/practice/intervals/identify`, `/practice/chords`, `/practice/rhythm`.

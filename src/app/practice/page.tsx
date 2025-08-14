@@ -19,13 +19,13 @@ export default function PracticeLandingPage() {
             title="Intervals"
             description="Identify, compare, and sing intervals. Start with Identification."
             href="/practice/intervals"
-            icon={<span role="img" aria-label="music note">🎵</span>}
+            icon={<span role="img" aria-label="Intervals">🎵</span>}
           />
           <PracticeCard
             title="Chords"
             description="Qualities, inversions, and progressions. Coming soon."
             href="#"
-            icon={<span role="img" aria-label="piano">🎹</span>}
+            icon={<span role="img" aria-label="Chords">🎹</span>}
             disabled
             kicker="Soon"
           />
@@ -33,7 +33,7 @@ export default function PracticeLandingPage() {
             title="Rhythm"
             description="Subdivision and pattern recognition. Coming soon."
             href="#"
-            icon={<span role="img" aria-label="drum">🥁</span>}
+            icon={<span role="img" aria-label="Rhythm">🥁</span>}
             disabled
             kicker="Soon"
           />

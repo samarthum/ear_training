@@ -19,7 +19,7 @@ export default function ChordsSelectorPage() {
             title="Chord Identification"
             description="Identify chord qualities in context — coming soon."
             href="#"
-            icon={<span role="img" aria-label="piano">🎹</span>}
+            icon={<span role="img" aria-label="Chord Identification">🎹</span>}
             disabled
             kicker="Soon"
           />
@@ -27,7 +27,7 @@ export default function ChordsSelectorPage() {
             title="Chord Inversions"
             description="Recognize chord inversions — coming soon."
             href="#"
-            icon={<span role="img" aria-label="repeat">🔁</span>}
+            icon={<span role="img" aria-label="Chord Inversions">🔁</span>}
             disabled
             kicker="Soon"
           />
@@ -35,7 +35,7 @@ export default function ChordsSelectorPage() {
             title="Chord Progressions"
             description="Identify common progressions — coming soon."
             href="#"
-            icon={<span role="img" aria-label="score">🎼</span>}
+            icon={<span role="img" aria-label="Chord Progressions">🎼</span>}
             disabled
             kicker="Soon"
           />
