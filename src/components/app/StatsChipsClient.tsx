@@ -34,7 +34,33 @@ export function StatsChipsClient() {
   }, []);
 
   React.useEffect(() => {
+    // Initialize from URL param or localStorage
+    try {
+      const url = new URL(window.location.href);
+      const p = url.searchParams.get("range") as Range | null;
+      const stored = (localStorage.getItem("statsRange") as Range | null) ?? null;
+      const initial = (p === "7d" || p === "30d" || p === "all")
+        ? p
+        : (stored === "7d" || stored === "30d" || stored === "all")
+          ? stored
+          : "7d";
+      if (initial !== range) setRange(initial);
+    } catch {
+      // ignore
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
     void load(range);
+    try {
+      localStorage.setItem("statsRange", range);
+      const url = new URL(window.location.href);
+      url.searchParams.set("range", range);
+      window.history.replaceState({}, "", url);
+    } catch {
+      // ignore
+    }
   }, [range, load]);
 
   return (
@@ -46,15 +72,15 @@ export function StatsChipsClient() {
       <div className="flex items-center gap-2 overflow-x-auto">
         {loading || !totals ? (
           <>
-            <KpiChip icon={<Target size={16} />} label="Attempts" value={"—"} />
-            <KpiChip icon={<TrendingUp size={16} />} label="Accuracy" value={"—"} />
-            <KpiChip icon={<Flame size={16} />} label="Streak" value={"—"} />
+            <KpiChip icon={<Target size={16} />} label="Attempts" value={"—"} ariaLabel={`Attempts over ${range}`} />
+            <KpiChip icon={<TrendingUp size={16} />} label="Accuracy" value={"—"} ariaLabel={`Accuracy over ${range}`} />
+            <KpiChip icon={<Flame size={16} />} label="Streak" value={"—"} ariaLabel={`Current streak`} />
           </>
         ) : (
           <>
-            <KpiChip icon={<Target size={16} />} label="Attempts" value={totals.totalAttempts} />
-            <KpiChip icon={<TrendingUp size={16} />} label="Accuracy" value={`${totals.accuracy}%`} />
-            <KpiChip icon={<Flame size={16} />} label="Streak" value={`${totals.streakDays}d`} />
+            <KpiChip icon={<Target size={16} />} label="Attempts" value={totals.totalAttempts} ariaLabel={`Attempts over ${range}: ${totals.totalAttempts}`} />
+            <KpiChip icon={<TrendingUp size={16} />} label="Accuracy" value={`${totals.accuracy}%`} ariaLabel={`Accuracy over ${range}: ${totals.accuracy} percent`} />
+            <KpiChip icon={<Flame size={16} />} label="Streak" value={`${totals.streakDays}d`} ariaLabel={`Current streak: ${totals.streakDays} days`} />
           </>
         )}
       </div>

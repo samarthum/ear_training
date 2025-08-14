@@ -4,7 +4,7 @@ Use this as a living checklist while implementing the dashboard/practice restruc
 
 ### Milestone 1 — Information Architecture & Routing
 - [x] Create `src/app/practice/page.tsx` with three category tiles: Intervals (enabled), Chords (disabled), Rhythm (disabled).
-- [ ] Add proper disabled visuals and `aria-disabled` semantics for disabled tiles; prevent navigation when disabled.
+ - [x] Add proper disabled visuals and `aria-disabled` semantics for disabled tiles; prevent navigation when disabled.
 - [x] Move current Intervals drill implementation to `src/app/practice/intervals/identify/page.tsx` (uses existing `IntervalsPracticeClient`).
 - [x] Convert `src/app/practice/intervals/page.tsx` into an Intervals subtype selector with three tiles: Identification (enabled → `/practice/intervals/identify`), Comparison (disabled), Singing (disabled).
 - [x] Replace `src/app/practice/chords/page.tsx` with a Chords subtype selector (Identification, Inversions, Progressions — all disabled for now).
