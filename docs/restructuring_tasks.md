@@ -20,17 +20,17 @@ Use this as a living checklist while implementing the dashboard/practice restruc
 - [ ] Create `TimeframeToggle` component with `value: '7d' | '30d' | 'all'` and `onChange` handler (URL param integration ready).
 
 ### Milestone 3 — Stats Service (Timeframe Support)
-- [ ] Update `getUserStats(userId)` → `getUserStats(userId, range: '7d' | '30d' | 'all' = '7d')`.
-- [ ] Implement date-range filtering for attempts to compute totals for 7d/30d/all.
+- [x] Update `getUserStats(userId)` → `getUserStats(userId, range: '7d' | '30d' | 'all' = '7d')`.
+- [x] Implement date-range filtering for attempts to compute totals for 7d/30d/all.
 - [ ] Return `range` metadata in the response and ensure accuracy/streak semantics remain correct.
-- [ ] Update API at `src/app/api/stats/route.ts` to accept `?range=7d|30d|all` and pass to service.
+- [x] Update API at `src/app/api/stats/route.ts` to accept `?range=7d|30d|all` and pass to service.
 
 ### Milestone 4 — Dashboard Simplification
 - [ ] Trim hero copy to 1–2 lines while keeping “Welcome back, {name}”.
 - [ ] Add primary CTA “Start practice” linking to `/practice` (top area).
 - [ ] Add sticky bottom CTA on small screens with the same action.
-- [ ] Replace existing stat cards on mobile with a horizontally scrollable row of `KpiChip`s: Attempts, Accuracy, Streak.
-- [ ] Add `TimeframeToggle` (7d/30d/All) controlling the chips and API query.
+- [x] Replace existing stat cards on mobile with a horizontally scrollable row of `KpiChip`s: Attempts, Accuracy, Streak.
+- [x] Add `TimeframeToggle` (7d/30d/All) controlling the chips and API query.
 - [ ] Swap emoji icons for lucide icons (`Target`, `TrendingUp`, `Flame`).
 
 ### Milestone 5 — Header / Navigation

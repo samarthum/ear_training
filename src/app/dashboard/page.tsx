@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { KpiChip } from "@/components/app/KpiChip";
 import { Target, TrendingUp, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StatsChipsClient } from "@/components/app/StatsChipsClient";
 
 async function StatsSection({ userId, compact = false }: { userId: string; compact?: boolean }) {
   const stats = await getUserStats(userId);
@@ -87,12 +88,9 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Stats overview with skeleton */}
+        {/* Stats overview: mobile chips are client-driven with timeframe toggle; desktop keeps cards for now */}
         <div className="md:hidden">
-          <Suspense fallback={<StatsSkeleton />}> 
-            {/* Compact mobile: single-row stats */}
-            <StatsSection userId={session.user.id as string} compact />
-          </Suspense>
+          <StatsChipsClient />
         </div>
         <div className="hidden md:block">
           <Suspense fallback={<StatsSkeleton />}>

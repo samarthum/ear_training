@@ -25,6 +25,8 @@ function asHeatMap(json: unknown): HeatMap {
   return out;
 }
 
+export type StatsRange = "7d" | "30d" | "all";
+
 export interface UserStats {
   totals: {
     totalAttempts: number;
@@ -38,13 +40,10 @@ export interface UserStats {
   last7: Array<{ date: string; total: number; correct: number }>;
 }
 
-export async function getUserStats(userId: string): Promise<UserStats> {
+export async function getUserStats(userId: string, range: StatsRange = "7d"): Promise<UserStats> {
   // Totals and heat from UserStat
   const stat = await prisma.userStat.findUnique({ where: { userId } });
-  const totalAttempts = stat?.totalAttempts ?? 0;
-  const correctAttempts = stat?.correctAttempts ?? 0;
   const streakDays = stat?.streakDays ?? 0;
-  const accuracy = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0;
 
   const intervalHeat = asHeatMap(stat?.intervalHeat);
   const chordHeat = asHeatMap(stat?.chordHeat);
@@ -84,6 +83,27 @@ export async function getUserStats(userId: string): Promise<UserStats> {
   const last7 = Object.entries(buckets)
     .sort(([d1], [d2]) => (d1 < d2 ? -1 : 1))
     .map(([date, { total, correct }]) => ({ date, total, correct }));
+
+  // Compute totals based on requested range
+  let totalAttempts: number;
+  let correctAttempts: number;
+  if (range === "all") {
+    totalAttempts = stat?.totalAttempts ?? 0;
+    correctAttempts = stat?.correctAttempts ?? 0;
+  } else {
+    const days = range === "7d" ? 7 : 30;
+    const rangeStart = new Date();
+    rangeStart.setHours(0, 0, 0, 0);
+    rangeStart.setDate(rangeStart.getDate() - (days - 1));
+
+    const attemptsInRange = await prisma.attempt.findMany({
+      where: { userId, createdAt: { gte: rangeStart } },
+      select: { isCorrect: true },
+    });
+    totalAttempts = attemptsInRange.length;
+    correctAttempts = attemptsInRange.reduce((acc, a) => acc + (a.isCorrect ? 1 : 0), 0);
+  }
+  const accuracy = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0;
 
   return {
     totals: { totalAttempts, correctAttempts, accuracy, streakDays },
