@@ -580,7 +580,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
                       <Button variant="outline">Close</Button>
                     </DialogClose>
                     <DialogClose asChild>
-                      <Button variant="brandPrimary">Save settings</Button>
+                      <Button variant="default">Save settings</Button>
                     </DialogClose>
                   </div>
                 </div>
@@ -624,7 +624,7 @@ export default function IntervalsPracticeClient({ drillId }: { drillId: string }
       {/* Play panel - Simplified */}
       {phase === "RUNNING" && (
         <div className="flex items-center justify-center gap-2 mb-3">
-          <Button variant="brandPrimary" size="lg" disabled={!pending || isPlaying} onClick={playQuestionOnly} className="flex items-center gap-2">
+          <Button variant="default" size="lg" disabled={!pending || isPlaying} onClick={playQuestionOnly} className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
             </svg>

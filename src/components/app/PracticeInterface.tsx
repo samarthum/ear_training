@@ -62,7 +62,7 @@ export function PracticeInterface({
               <Button
                 onClick={onStart}
                 disabled={isPlaying || isLoading}
-                variant="brandPrimary"
+                variant="default"
                 size="lg"
                 className="min-w-[200px] h-14 text-lg font-bold hover:shadow-xl transition-all duration-200 transform hover:scale-105"
               >

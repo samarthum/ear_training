@@ -83,7 +83,7 @@ export default async function DashboardPage() {
             Continue your ear training with a quick, personalized drill.
           </p>
           <div className="pt-2">
-            <Button variant="brandPrimary" size="lg" asChild>
+            <Button variant="default" size="lg" asChild>
               <Link href="/practice">Start practice</Link>
             </Button>
           </div>
