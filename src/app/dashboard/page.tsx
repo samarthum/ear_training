@@ -1,32 +1,45 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import Link from "next/link";
 import { AppLayout } from "@/components/app/AppLayout";
-import { PracticeCard } from "@/components/app/PracticeCard";
 import { StatsCard } from "@/components/app/StatsCard";
 import { getUserStats } from "@/lib/stats";
 import { Skeleton } from "@/components/ui/skeleton";
+import { KpiChip } from "@/components/app/KpiChip";
+import { Target, TrendingUp, Flame } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 async function StatsSection({ userId, compact = false }: { userId: string; compact?: boolean }) {
   const stats = await getUserStats(userId);
+  if (compact) {
+    return (
+      <div className="flex items-center gap-2 overflow-x-auto">
+        <KpiChip icon={<Target size={16} />} label="Attempts" value={stats.totals.totalAttempts} />
+        <KpiChip icon={<TrendingUp size={16} />} label="Accuracy" value={`${stats.totals.accuracy}%`} />
+        <KpiChip icon={<Flame size={16} />} label="Streak" value={`${stats.totals.streakDays}d`} />
+      </div>
+    );
+  }
+
   return (
-    <div className={compact ? "grid grid-cols-3 gap-2" : "grid grid-cols-1 md:grid-cols-3 gap-6"}>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <StatsCard 
         title="Total Attempts"
         value={stats.totals.totalAttempts}
-        subtitle={compact ? "" : "All-time across drills"}
+        subtitle={"All-time across drills"}
         icon="🎯"
       />
       <StatsCard 
         title="Accuracy"
         value={`${stats.totals.accuracy}%`}
-        subtitle={compact ? "" : `${stats.totals.correctAttempts} correct`}
+        subtitle={`${stats.totals.correctAttempts} correct`}
         icon="📈"
       />
       <StatsCard 
         title="Current Streak" 
         value={`${stats.totals.streakDays} day${stats.totals.streakDays === 1 ? '' : 's'}`}
-        subtitle={compact ? "" : "Based on daily activity"}
+        subtitle={"Based on daily activity"}
         icon="🔥"
       />
     </div>
@@ -64,9 +77,14 @@ export default async function DashboardPage() {
           <h1 className="text-xl sm:text-3xl md:text-4xl font-bold text-[color:var(--brand-text)] tracking-tight">
             Welcome back{session.user.name ? `, ${session.user.name.split(' ')[0]}` : ''}
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-[color:var(--brand-muted)] max-w-2xl mx-auto">
-            Continue your ear training journey with interval recognition, chord identification, and progression analysis.
+          <p className="text-sm sm:text-base md:text-lg text-[color:var(--brand-muted)] max-w-xl mx-auto">
+            Continue your ear training with a quick, personalized drill.
           </p>
+          <div className="pt-2">
+            <Button variant="brand" size="lg" asChild>
+              <Link href="/practice">Start practice</Link>
+            </Button>
+          </div>
         </div>
 
         {/* Stats overview with skeleton */}
@@ -82,30 +100,12 @@ export default async function DashboardPage() {
           </Suspense>
         </div>
 
-        {/* Practice options */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-[color:var(--brand-text)] text-center">
-            Choose Your Practice
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <PracticeCard 
-              title="Intervals"
-              description="Practice identifying intervals in tonal context. Start with major and minor seconds, thirds, fourths, and fifths."
-              href="/practice/intervals"
-              icon="🎵"
-            />
-            <PracticeCard
-              title="Chords" 
-              description="Recognize chord qualities and inversions. Master major, minor, diminished, and augmented triads."
-              href="/practice/chords"
-              icon="🎹"
-            />
-            <PracticeCard
-              title="Progressions"
-              description="Identify common chord progressions like I-IV-V-I, I-V-vi-IV, and jazz progressions."  
-              href="/practice/progressions"
-              icon="🎼"
-            />
+        {/* Sticky bottom primary CTA for mobile */}
+        <div className="md:hidden fixed bottom-4 inset-x-0 flex justify-center pointer-events-none">
+          <div className="pointer-events-auto">
+            <Button variant="brand" size="lg" asChild>
+              <Link href="/practice">Start practice</Link>
+            </Button>
           </div>
         </div>
       </div>
