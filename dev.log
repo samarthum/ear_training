@@ -756,3 +756,6 @@ Import trace for requested module:
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/samarth/Desktop/Work/code/ear_training/.next/cache/webpack/client-development-fallback/0.pack.gz_' -> '/Users/samarth/Desktop/Work/code/ear_training/.next/cache/webpack/client-development-fallback/0.pack.gz'
  ✓ Compiled in 2.1s (1227 modules)
  ✓ Compiled in 370ms (1227 modules)
+ ✓ Compiled in 1378ms (1227 modules)
+ ✓ Compiled in 272ms (487 modules)
+ ✓ Compiled in 241ms (487 modules)

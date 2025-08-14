@@ -23,8 +23,8 @@ const buttonVariants = cva(
         brand:
           "shadow-[var(--brand-shadow)] text-[var(--brand-text)] border border-[color:var(--brand-line)] bg-[color:transparent] hover:bg-[color:rgba(14,165,165,0.07)]",
         brandPrimary:
-          "text-[var(--brand-text)] border border-[color:color-mix(in oklab,var(--brand-accent)_45%,var(--brand-line))] bg-[color:transparent] " +
-          "[background:linear-gradient(180deg,color-mix(in_oklab,var(--brand-accent)_15%,transparent),color-mix(in_oklab,var(--brand-accent)_5%,transparent))]",
+          "bg-[#D9F6F1] text-[#0F766E] border border-[#99EDE1] hover:bg-[#CFF1EC] " +
+          "shadow-[var(--brand-shadow)] focus-visible:ring-[#99EDE1]/50 focus-visible:border-[#99EDE1]",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
