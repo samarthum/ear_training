@@ -7,26 +7,26 @@ import { StatsCard } from "@/components/app/StatsCard";
 import { getUserStats } from "@/lib/stats";
 import { Skeleton } from "@/components/ui/skeleton";
 
-async function StatsSection({ userId }: { userId: string }) {
+async function StatsSection({ userId, compact = false }: { userId: string; compact?: boolean }) {
   const stats = await getUserStats(userId);
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className={compact ? "grid grid-cols-3 gap-2" : "grid grid-cols-1 md:grid-cols-3 gap-6"}>
       <StatsCard 
         title="Total Attempts"
         value={stats.totals.totalAttempts}
-        subtitle="All-time across drills"
+        subtitle={compact ? "" : "All-time across drills"}
         icon="🎯"
       />
       <StatsCard 
         title="Accuracy"
         value={`${stats.totals.accuracy}%`}
-        subtitle={`${stats.totals.correctAttempts} correct`}
+        subtitle={compact ? "" : `${stats.totals.correctAttempts} correct`}
         icon="📈"
       />
       <StatsCard 
         title="Current Streak" 
         value={`${stats.totals.streakDays} day${stats.totals.streakDays === 1 ? '' : 's'}`}
-        subtitle="Based on daily activity"
+        subtitle={compact ? "" : "Based on daily activity"}
         icon="🔥"
       />
     </div>
@@ -61,7 +61,7 @@ export default async function DashboardPage() {
       <div className="space-y-8">
         {/* Welcome section */}
         <div className="text-center space-y-2 md:space-y-3">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[color:var(--brand-text)] tracking-tight">
+          <h1 className="text-xl sm:text-3xl md:text-4xl font-bold text-[color:var(--brand-text)] tracking-tight">
             Welcome back{session.user.name ? `, ${session.user.name.split(' ')[0]}` : ''}
           </h1>
           <p className="text-sm sm:text-base md:text-lg text-[color:var(--brand-muted)] max-w-2xl mx-auto">
@@ -71,12 +71,10 @@ export default async function DashboardPage() {
 
         {/* Stats overview with skeleton */}
         <div className="md:hidden">
-          <div className="grid grid-cols-3 gap-2">
-            <Suspense fallback={<StatsSkeleton />}> 
-              {/* Compact mobile: reuse StatsSection but CSS shrinks via StatsCard */}
-              <StatsSection userId={session.user.id as string} />
-            </Suspense>
-          </div>
+          <Suspense fallback={<StatsSkeleton />}> 
+            {/* Compact mobile: single-row stats */}
+            <StatsSection userId={session.user.id as string} compact />
+          </Suspense>
         </div>
         <div className="hidden md:block">
           <Suspense fallback={<StatsSkeleton />}>
